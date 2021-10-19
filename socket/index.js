@@ -70,8 +70,10 @@ io.on("connection", (socket) => {
     console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
     console.log(result);
     if (result != 0) {
-      if (gameName == "rouletteTimer40" && gameName == "rouletteTimer60")
+      if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
+        console.log("sandip Shiroya");
         playCasino(gameName, position, result);
+      }
 
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
