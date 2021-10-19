@@ -84,6 +84,17 @@ io.on("connection", (socket) => {
         games[gameName].adminBalance
       );
     }
+    socket.emit("res", {
+      data: {
+        handId: result,
+        result:
+          result == 0
+            ? "You don't have sufficient Balance or Error on Place bet"
+            : "Place Bet Success",
+      },
+      en: "placeBet",
+      status: 1,
+    });
   });
 
   socket.on("leaveRoom", ({ gameName, userId }) => {
