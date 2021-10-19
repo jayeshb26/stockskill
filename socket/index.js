@@ -172,11 +172,11 @@ io.on("connection", (socket) => {
 setInterval(async () => {
   // if (new Date().getHours() > 7 && new Date().getHours() < 22) {
 
-  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 40) {
+  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 60) {
     getResult("rouletteTimer40", 36);
   }
 
-  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 60) {
+  if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 80) {
     getResult("rouletteTimer60", 36);
   }
 
