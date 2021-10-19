@@ -98,8 +98,8 @@ io.on("connection", (socket) => {
     if (transId != 0) {
       if (betPoint) games.roulette.adminBalance += (betPoint * adminPer) / 100;
       let game = { position: {} };
-      for (pos of position) {
-        for (num of pos[Object.keys(pos)[0]]) {
+      for (const pos of position) {
+        for (const num of pos[Object.keys(pos)[0]]) {
           let wonAmount = (pos.amount * 36) / pos[Object.keys(pos)[0]].length;
           game.position = immutable.update(game.position, [num], (v) =>
             v ? v + wonAmount : wonAmount
@@ -176,7 +176,7 @@ getResultRoulette = (position) => {
   let sortResult = sortObject(position);
   console.log("Roulette Royal SortResult is", sortResult);
 
-  for (num of sortResult) {
+  for (const num of sortResult) {
     let value = Object.values(num)[0];
     let key = Object.keys(num)[0];
     console.log("value : ", value, " key : ", key);
@@ -215,7 +215,7 @@ getResult = async (gameName, stopNum) => {
     console.log(gameName, "Solo    Before : ", games[gameName].position);
     let sortResult = sortObject(games[gameName].position);
     console.log(gameName, "After : ", sortResult);
-    for (num of sortResult) {
+    for (const num of sortResult) {
       let value = Object.values(num)[0];
       let key = Object.keys(num)[0];
       if (value < games[gameName].adminBalance) {
@@ -319,8 +319,8 @@ flushAll = (gameName) => {
 };
 
 playCasino = (gameName, position, result) => {
-  for (pos of position) {
-    for (num of pos[Object.keys(pos)[0]]) {
+  for (const pos of position) {
+    for (const num of pos[Object.keys(pos)[0]]) {
       let wonAmount = (pos.amount * 36) / pos[Object.keys(pos)[0]].length;
       games[gameName].position = immutable.update(
         games[gameName].position,

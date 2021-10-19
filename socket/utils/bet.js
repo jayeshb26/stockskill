@@ -106,11 +106,9 @@ async function getLastrecord(gameName, playerId) {
         .sort("-createdAt")
         .limit(15);
     let data = [];
-    let take = 0;
 
-    take = await User.findById(playerId);
     if (gameName != "roulette")
-      for (res of result) {
+      for (let res of result) {
         data.push(res.result);
       }
 
