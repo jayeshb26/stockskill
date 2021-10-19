@@ -127,6 +127,7 @@ io.on("connection", (socket) => {
       await winGamePay(winAmount, transId, result, "roulette");
       socket.emit("res", {
         data: {
+          handId: transId,
           gameName: "roulette",
           data: result,
           winAmount,
