@@ -87,6 +87,7 @@ io.on("connection", (socket) => {
     socket.emit("res", {
       data: {
         handId: result,
+        gameName,
         result:
           result == 0
             ? "You don't have sufficient Balance or Error on Place bet"
