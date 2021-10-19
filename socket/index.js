@@ -65,38 +65,26 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on(
-    "placeBet",
-    async ({ playerId, gameName, position, betPoint, position2 }) => {
-      const result = await placeBet(playerId, gameName, position, betPoint);
+  socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
+    const result = await placeBet(playerId, gameName, position, betPoint);
+    console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
+    if (result != 0) {
+      if (gameName == "rouletteTimer40") playCasino(gameName, position, result);
+
       console.log(
-        gameName,
-        "  :  ",
-        position,
-        " Bet Point :  ",
-        betPoint,
-        position2
+        "Viju vinod Chopda before : ",
+        games.rouletteTimer40.adminBalance,
+        games[gameName].adminBalance
       );
-      if (result != 0) {
-        if (gameName == "rouletteTimer40")
-          playCasino(gameName, position, result);
 
-        console.log(
-          "Viju vinod Chopda before : ",
-          games.rouletteTimer40.adminBalance,
-          games[gameName].adminBalance
-        );
+      if (betPoint) games[gameName].adminBalance += (betPoint * adminPer) / 100;
 
-        if (betPoint)
-          games[gameName].adminBalance += (betPoint * adminPer) / 100;
-
-        console.log(
-          "Viju vinod Chopda Admin balance is: ",
-          games[gameName].adminBalance
-        );
-      }
+      console.log(
+        "Viju vinod Chopda Admin balance is: ",
+        games[gameName].adminBalance
+      );
     }
-  );
+  });
   // socket.on("takeMoney", async ({ playerId, gameName }) => {
   //   let data = await takePoint(gameName, playerId)
   //   socket.emit("res", {
