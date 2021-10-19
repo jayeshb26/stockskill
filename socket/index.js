@@ -68,6 +68,7 @@ io.on("connection", (socket) => {
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
     const result = await placeBet(playerId, gameName, position, betPoint);
     console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
+    console.log(result);
     if (result != 0) {
       if (gameName == "rouletteTimer40" && gameName == "rouletteTimer60")
         playCasino(gameName, position, result);
@@ -82,12 +83,6 @@ io.on("connection", (socket) => {
       );
     }
   });
-  // socket.on("takeMoney", async ({ playerId, gameName }) => {
-  //   let data = await takePoint(gameName, playerId)
-  //   socket.emit("res", {
-  //     data, gameName, en: "takeMoney", status: 1
-  //   });
-  // })
 
   socket.on("leaveRoom", ({ gameName, userId }) => {
     socket.leave(gameName);
