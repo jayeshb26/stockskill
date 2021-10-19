@@ -69,13 +69,10 @@ io.on("connection", (socket) => {
     const result = await placeBet(playerId, gameName, position, betPoint);
     console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
     if (result != 0) {
-      if (gameName == "rouletteTimer40") playCasino(gameName, position, result);
+      if (gameName == "rouletteTimer40" && gameName == "rouletteTimer60")
+        playCasino(gameName, position, result);
 
-      console.log(
-        "Viju vinod Chopda before : ",
-        games.rouletteTimer40.adminBalance,
-        games[gameName].adminBalance
-      );
+      console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
       if (betPoint) games[gameName].adminBalance += (betPoint * adminPer) / 100;
 
