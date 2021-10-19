@@ -279,7 +279,7 @@ getResult = async (gameName, stopNum) => {
   await addGameResult(gameName, result);
 
   // Pay Out of the winners
-
+  await payTransaction(gameName, result);
   flushAll(gameName);
 };
 
