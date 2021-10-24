@@ -118,7 +118,7 @@ exports.getWinnerResultsByDate = asyncHandler(async (req, res, next) => {
 //@desc      Get 7days Win Result History
 //@routes    post /api/players/point
 //Access     Private/Admin
-exports.getWinnerResultsByDate = asyncHandler(async (req, res, next) => {
+exports.addPointRequest = asyncHandler(async (req, res, next) => {
   const point = await PointRequest.create({
     point: req.body.point,
     Comment: req.body.Comment,
