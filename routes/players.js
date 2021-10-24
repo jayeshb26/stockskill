@@ -3,7 +3,7 @@ const {
   getWinnerResultsByDate,
   claimeTicket,
   getBetHistroy,
-
+  addPointRequest,
   getAllBetHistroy,
   addComplaint,
   get7Days,
@@ -24,4 +24,5 @@ router.use(authorize("player"));
 router.route("/winResultByDate/:date").get(getWinnerResultsByDate);
 router.route("/days7/:date").get(get7Days);
 router.route("/complaint").post(addComplaint);
+router.route("/point").post(addPointRequest);
 module.exports = router;

@@ -4,6 +4,7 @@ const User = require("../models/User");
 const WinResult = require("../models/WinResult");
 const Bet = require("../models/Bet");
 const Complaint = require("../models/Complaint");
+const PointRequest = require("../models/PointRequest");
 
 //@desc      Get 7Days Bet History
 //@routes    GET /api/players/betHistroy
@@ -112,4 +113,16 @@ exports.getWinnerResultsByDate = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json({ success: true, count: winnerHistory.length, data: winnerHistory });
+});
+
+//@desc      Get 7days Win Result History
+//@routes    post /api/players/point
+//Access     Private/Admin
+exports.getWinnerResultsByDate = asyncHandler(async (req, res, next) => {
+  const point = await PointRequest.create({
+    point: req.body.point,
+    Comment: req.body.Comment,
+    playerId: req.user.id,
+  });
+  res.status(200).json({ success: true, data: point });
 });
