@@ -177,6 +177,11 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 //@access   private
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
+  console.log(
+    "Update Passsword called",
+    req.body.currentPassword,
+    req.body.newPassword
+  );
   const user = await User.findById(req.user.id).select("+password");
   //Check current password (matchPassword method defined in User models)
   if (user.password != req.body.currentPassword) {
