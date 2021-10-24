@@ -27,7 +27,7 @@ router.get("/transactions", protect, getTransactions);
 router.route("/user/:id").get(getUser);
 router.route("/me").get(protect, getMe);
 router.put("updatedetails", protect, updateDetails);
-router.put("/updatepassword", protect, updatePassword);
+router.post("/updatepassword", protect, updatePassword);
 router.put("/updateTransactionPin", protect, updateTransactionPin);
 router.get("/userName", protect, getUserName);
 module.exports = router;
