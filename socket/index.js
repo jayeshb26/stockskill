@@ -77,7 +77,7 @@ io.on("connection", (socket) => {
 
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
-      if (betPoint) games[gameName].adminBalance += (betPoint * adminPer) / 100;
+      if (betPoint) games[gameName].adminBalance += (betPoint * winningPercent[gameName]) / 100;
 
       console.log(
         "Viju vinod Chopda Admin balance is: ",
@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
     console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
 
     if (transId != 0) {
-      if (betPoint) games.roulette.adminBalance += (betPoint * adminPer) / 100;
+      if (betPoint) games.roulette.adminBalance += (betPoint * winningPercent.roulette) / 100;
       let game = { position: {} };
       for (const pos of position) {
         for (const num of pos[Object.keys(pos)[0]]) {
@@ -138,7 +138,7 @@ io.on("connection", (socket) => {
 
       console.log(
         "Roullete Royal Admin balance is: ",
-        games.roulette.adminBalance,
+        games.roulette.winningPercent[gameName],
         "& result is : ",
         result
       );
