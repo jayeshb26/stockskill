@@ -5,31 +5,35 @@ const Winning = require("../../models/Winning");
 async function placeBet(playerId, game, position, betPoint) {
   //Verify Token
   try {
-    let user = await User.findById(playerId);
-    const classic = await User.findById(user.referralId);
+    let player = await User.findById(playerId);
+    const classic = await User.findById(player.referralId);
     const executive = await User.findById(classic.referralId);
-    if (user.creditPoint >= betPoint) {
+    const premium = await User.findById(executive.referralId);
+    const agent = await User.findById(premium.referralId);
+    if (player.creditPoint >= betPoint) {
       bet = await Bet.create({
         playerId,
         game,
         bet: betPoint,
-        startPoint: user.creditPoint,
-        userName: user.userName,
+        startPoint: player.creditPoint,
+        userName: player.userName,
         position,
-        name: user.name,
+        name: player.name,
         classicCommission: (betPoint * classic.commissionPercentage) / 100,
         executiveCommission: (betPoint * executive.commissionPercentage) / 100,
-        playerCommission: (betPoint * user.commissionPercentage) / 100,
+        playerCommission: (betPoint * player.commissionPercentage) / 100,
+        premiumCommission: (betPoint * premium.commissionPercentage) / 100,
+        agentCommission: (betPoint * agent.commissionPercentage) / 100
       });
       await User.findByIdAndUpdate(playerId, {
         $inc: {
           creditPoint: -betPoint,
           playPoint: betPoint,
-          commissionPoint: (betPoint * user.commissionPercentage) / 100,
+          commissionPoint: (betPoint * player.commissionPercentage) / 100,
         },
         lastBetAmount: betPoint,
       });
-      await User.findByIdAndUpdate(user.referralId, {
+      await User.findByIdAndUpdate(player.referralId, {
         $inc: {
           commissionPoint: (betPoint * classic.commissionPercentage) / 100,
         },
@@ -37,6 +41,16 @@ async function placeBet(playerId, game, position, betPoint) {
       await User.findByIdAndUpdate(classic.referralId, {
         $inc: {
           commissionPoint: (betPoint * executive.commissionPercentage) / 100,
+        },
+      });
+      await User.findByIdAndUpdate(executive.referralId, {
+        $inc: {
+          commissionPoint: (betPoint * premium.commissionPercentage) / 100,
+        },
+      });
+      await User.findByIdAndUpdate(premium.referralId, {
+        $inc: {
+          commissionPoint: (betPoint * agent.commissionPercentage) / 100,
         },
       });
       return bet._id;
@@ -63,9 +77,9 @@ async function winGamePay(price, betId, winPosition, gameName) {
     const betData = await Bet.findByIdAndUpdate(betId, {
       $inc: { won: price },
     });
-    let user = "";
+    let player = "";
 
-    user =
+    player =
       gameName == "rouletteMini"
         ? await User.findByIdAndUpdate(betData.playerId, {
           $inc: { creditPoint: price, wonPoint: price },
