@@ -65,6 +65,50 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("joinAdmin", async ({ adminId }) => {
+    try {
+      let user = await getUserInfo(adminId);
+      if (user.role == "Admin") {
+        socket.join("adminData");
+        socket.emit("resAdmin", {
+          data: games,
+        });
+      } else
+        socket.emit("res", {
+          data: "You are not authorised to access this information",
+          en: "error",
+        });
+    } catch (error) {
+      console.log(error)
+    }
+
+  });
+
+
+  socket.on("changeAdminBalance", async ({ adminId, data }) => {
+    try {
+      console.log(adminId, data)
+      let user = await getUserInfo(adminId);
+      console.log(user);
+      if (user.role == "Admin") {
+        games.rouletteTimer40.adminBalance = data.rouletteTimer40;
+        games.rouletteTimer60.adminBalance = data.rouletteTimer60;
+        console.log("data change", adminBalance)
+        socket.emit("resAdmin", {
+          data: games,
+        });
+      } else
+        socket.emit("res", {
+          data: "You are not authorised to access this information",
+          en: "error",
+        });
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  });
+
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
     const result = await placeBet(playerId, gameName, position, betPoint);
     console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
@@ -84,6 +128,10 @@ io.on("connection", (socket) => {
         games[gameName].adminBalance
       );
     }
+
+    socket.to("adminData").emit("resAdmin", {
+      data: games,
+    });
     socket.emit("res", {
       data: {
         handId: result,
