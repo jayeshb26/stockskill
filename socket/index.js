@@ -29,7 +29,7 @@ let users = {};
 let players = {};
 //TransactionId
 let transactions = {};
-let adminPer = 90;
+let winningPercent = { rouletteTimer40: 90, rouletteTimer60: 90, roulette: 90 };
 io.on("connection", (socket) => {
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
@@ -176,11 +176,13 @@ setInterval(async () => {
   }
 
   //Get Admin Percentage
-  // if (new Date().getMinutes() == 1 && new Date().getSeconds == 1) {
-  //   let p = await getAdminPer();
-
-  //   winningPercent = p.percent;
-  // }
+  if (new Date().getMinutes() == 1 && new Date().getSeconds == 1) {
+    let p = await getAdminPer();
+    console.log("This is the data", p);
+    winningPercent.roulette = p.roulette;
+    winningPercent.rouletteTimer40 = p.rouletteTimer40;
+    winningPercent.rouletteTimer60 = p.rouletteTimer60;
+  }
 
   //}
 }, 1000);

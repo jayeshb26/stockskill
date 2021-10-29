@@ -68,11 +68,11 @@ async function winGamePay(price, betId, winPosition, gameName) {
     user =
       gameName == "rouletteMini"
         ? await User.findByIdAndUpdate(betData.playerId, {
-            $inc: { creditPoint: price, wonPoint: price },
-          })
+          $inc: { creditPoint: price, wonPoint: price },
+        })
         : await User.findByIdAndUpdate(betData.playerId, {
-            $inc: { creditPoint: price, wonPoint: price, winPosition },
-          });
+          $inc: { creditPoint: price, wonPoint: price, winPosition },
+        });
 
     return betData.playerId;
   } catch (err) {
@@ -132,18 +132,6 @@ async function getCurrentBetData(gameName, playerId) {
   return data;
 }
 
-async function updateAndarBahar(result) {
-  try {
-    await Bet.updateMany(
-      { $and: [{ game: "andarBahar" }, { andarBaharResult: "" }] },
-      { andarBaharResult: result }
-    );
-    return 0;
-  } catch (err) {
-    console.log("Error on updateAndarBahar ", err.message);
-    return err.message;
-  }
-}
 
 module.exports = {
   placeBet,
@@ -152,5 +140,5 @@ module.exports = {
   addGameResult,
   getLastrecord,
   getCurrentBetData,
-  updateAndarBahar,
+
 };
