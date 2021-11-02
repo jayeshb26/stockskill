@@ -262,7 +262,7 @@ getResultRoulette = (position) => {
       result = Math.round(Math.random() * 36);
       counter++;
       if (counter == 100) {
-        result = Object.keys(position)[0];
+        result = Object.keys(sortResult[0])[0];
         break;
       }
     }
