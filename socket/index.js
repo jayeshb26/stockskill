@@ -303,7 +303,9 @@ getResult = async (gameName, stopNum) => {
       counter++;
 
       if (counter == 100) {
-        result = Object.keys(games[gameName].position)[0];
+        //aaya Error mali ti
+
+        result = Object.keys(sortResult[0])[0];
         break;
       }
     }
