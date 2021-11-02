@@ -1,5 +1,5 @@
 const { io } = require("../server");
-const { getUserInfoBytoken } = require("./utils/users");
+const { getUserInfoBytoken, getUserInfo } = require("./utils/users");
 const {
   placeBet,
   winGamePay,
@@ -79,21 +79,19 @@ io.on("connection", (socket) => {
           en: "error",
         });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   });
-
 
   socket.on("changeAdminBalance", async ({ adminId, data }) => {
     try {
-      console.log(adminId, data)
+      console.log(adminId, data);
       let user = await getUserInfo(adminId);
       console.log(user);
       if (user.role == "Admin") {
         games.rouletteTimer40.adminBalance = data.rouletteTimer40;
         games.rouletteTimer60.adminBalance = data.rouletteTimer60;
-        console.log("data change", adminBalance)
+        console.log("data change", adminBalance);
         socket.emit("resAdmin", {
           data: games,
         });
@@ -102,11 +100,9 @@ io.on("connection", (socket) => {
           data: "You are not authorised to access this information",
           en: "error",
         });
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   });
 
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
@@ -121,7 +117,9 @@ io.on("connection", (socket) => {
 
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
-      if (betPoint) games[gameName].adminBalance += (betPoint * winningPercent[gameName]) / 100;
+      if (betPoint)
+        games[gameName].adminBalance +=
+          (betPoint * winningPercent[gameName]) / 100;
 
       console.log(
         "Viju vinod Chopda Admin balance is: ",
@@ -158,7 +156,9 @@ io.on("connection", (socket) => {
     console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
 
     if (transId != 0) {
-      if (betPoint) games.roulette.adminBalance += (betPoint * winningPercent.roulette) / 100;
+      if (betPoint)
+        games.roulette.adminBalance +=
+          (betPoint * winningPercent.roulette) / 100;
       let game = { position: {} };
       for (const pos of position) {
         for (const num of pos[Object.keys(pos)[0]]) {
