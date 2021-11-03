@@ -237,7 +237,7 @@ setInterval(async () => {
 
 getResultRoulette = (position) => {
   let result = "";
-
+  let resultArray = [];
   let sortResult = sortObject(position);
   console.log("Roulette Royal SortResult is", sortResult);
 
@@ -246,7 +246,10 @@ getResultRoulette = (position) => {
     let key = Object.keys(num)[0];
     console.log("value : ", value, " key : ", key);
     if (value < games.roulette.adminBalance) {
-      result = key;
+      if (position[result] != position[key])
+        resultArray = [];
+      resultArray.push(key);
+      result = resultArray[Math.floor(Math.random() * resultArray.length)];
     }
     if (value > games.roulette.adminBalance) {
       break;
@@ -274,6 +277,7 @@ getResultRoulette = (position) => {
 
 getResult = async (gameName, stopNum) => {
   let result = "";
+  let resultArray = [];
   games[gameName].startTime = new Date().getTime() / 1000;
 
   if (Object.keys(games[gameName].position).length != undefined) {
@@ -284,7 +288,10 @@ getResult = async (gameName, stopNum) => {
       let value = Object.values(num)[0];
       let key = Object.keys(num)[0];
       if (value < games[gameName].adminBalance) {
-        result = key;
+        if (games[gameName].position[result] != games[gameName].position[key])
+          resultArray = [];
+        resultArray.push(key);
+        result = resultArray[Math.floor(Math.random() * resultArray.length)];
       }
       if (value > games[gameName].adminBalance) {
         break;
