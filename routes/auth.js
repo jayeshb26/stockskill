@@ -14,11 +14,13 @@ const {
   logoutPlayer,
   getUserName,
   getUser,
+  setForgetPassword,
 } = require("../controllers/auth");
 const { protect, authorize } = require("../middleware/auth");
 
 const router = express.Router();
 // router.post("/", register);
+router.post("/forgetPassword", setForgetPassword);
 router.post("/login", login);
 router.post("/player/login", loginPlayer);
 router.get("/logout", logout);

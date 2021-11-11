@@ -3,7 +3,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-
+const ForgetPassword = require("../models/ForgetPassword");
 //@desc    Register a User
 //@route   Post /api/auth
 //@access  Private
@@ -310,7 +310,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 });
 
 //@desc      Get all Username
-//@routes    GET /api/users/userName
+//@routes    GET /api/auth/userName
 //Access     Private/Admin
 exports.getUserName = asyncHandler(async (req, res, next) => {
   const users = await User.find({
@@ -320,12 +320,20 @@ exports.getUserName = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: users });
 });
 //@desc      Get Single users
-//@routes    GET /api/users/:id
+//@routes    GET /api/auth/:id
 //Access     Private/for users
 exports.getUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById({ _id: req.params.id }).populate(
     "name",
     "userName"
   );
+  res.status(200).json({ success: true, data: user });
+});
+
+//@desc      Post Forget Password
+//@routes    Post /api/auth/forgetPassword
+//Access     Private/Admin
+exports.setForgetPassword = asyncHandler(async (req, res, next) => {
+  const user = await ForgetPassword.create(req.body.userName);
   res.status(200).json({ success: true, data: user });
 });
