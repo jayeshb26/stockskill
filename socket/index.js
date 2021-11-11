@@ -7,6 +7,7 @@ const {
   addGameResult,
   getLastrecord,
   getCurrentBetData,
+  getHotCold,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
@@ -15,11 +16,15 @@ let games = {
     startTime: new Date().getTime() / 1000,
     position: {},
     adminBalance: 0,
+    hot: [],
+    cold: [],
   },
   rouletteTimer60: {
     startTime: new Date().getTime() / 1000,
     position: {},
     adminBalance: 0,
+    hot: [],
+    cold: [],
   },
   roulette: { adminBalance: 0 },
 };
@@ -56,7 +61,8 @@ io.on("connection", (socket) => {
         user,
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         numbers: numbers.records,
-
+        hot: games[gameName].hot,
+        cold: games[gameName].cold,
         gameName,
         gameData,
       },
@@ -231,7 +237,14 @@ setInterval(async () => {
     winningPercent.rouletteTimer40 = p.rouletteTimer40;
     winningPercent.rouletteTimer60 = p.rouletteTimer60;
   }
-
+  if (new Date().getMinutes() % 15 == 0 && new Date().getSeconds == 1) {
+    let hotAndCold = await getHotCold("rouletteTimer40");
+    games.rouletteTimer40.hot = hotAndCold.hot;
+    games.rouletteTimer40.cold = hotAndCold.cold;
+    hotAndCold = await getHotCold("rouletteTimer60");
+    games.rouletteTimer60.hot = hotAndCold.hot;
+    games.rouletteTimer60.cold = hotAndCold.cold;
+  }
   //}
 }, 1000);
 
@@ -246,8 +259,7 @@ getResultRoulette = (position) => {
     let key = Object.keys(num)[0];
     console.log("value : ", value, " key : ", key);
     if (value < games.roulette.adminBalance) {
-      if (position[result] != position[key])
-        resultArray = [];
+      if (position[result] != position[key]) resultArray = [];
       resultArray.push(key);
       result = resultArray[Math.floor(Math.random() * resultArray.length)];
     }

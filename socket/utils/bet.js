@@ -2,6 +2,7 @@ const User = require("../../models/User");
 const Bet = require("../../models/Bet");
 const WinResult = require("../../models/WinResult");
 const Winning = require("../../models/Winning");
+const _ = require("lodash");
 async function placeBet(playerId, game, position, betPoint) {
   //Verify Token
   try {
@@ -23,7 +24,7 @@ async function placeBet(playerId, game, position, betPoint) {
         executiveCommission: (betPoint * executive.commissionPercentage) / 100,
         playerCommission: (betPoint * player.commissionPercentage) / 100,
         premiumCommission: (betPoint * premium.commissionPercentage) / 100,
-        agentCommission: (betPoint * agent.commissionPercentage) / 100
+        agentCommission: (betPoint * agent.commissionPercentage) / 100,
       });
       await User.findByIdAndUpdate(playerId, {
         $inc: {
@@ -82,11 +83,11 @@ async function winGamePay(price, betId, winPosition, gameName) {
     player =
       gameName == "rouletteMini"
         ? await User.findByIdAndUpdate(betData.playerId, {
-          $inc: { creditPoint: price, wonPoint: price },
-        })
+            $inc: { creditPoint: price, wonPoint: price },
+          })
         : await User.findByIdAndUpdate(betData.playerId, {
-          $inc: { creditPoint: price, wonPoint: price, winPosition },
-        });
+            $inc: { creditPoint: price, wonPoint: price, winPosition },
+          });
 
     return betData.playerId;
   } catch (err) {
@@ -146,7 +147,44 @@ async function getCurrentBetData(gameName, playerId) {
   return data;
 }
 
+async function getHotCold(gameName) {
+  let res = await WinResult.find({ gameName })
+    .select({ result: 1, _id: 0 })
+    .sort("-createdAt")
+    .limit(50);
+  let data = {};
 
+  for (let element of res) {
+    data[element] = data[element] ? data[element] + 1 : 1;
+  }
+
+  let data2 = sortObject(data);
+  let cold = [];
+  let hot = [];
+  for (let i = 0; i < 5; i++) {
+    cold.push(Object.keys(data2[i])[0]);
+    hot.push(Object.keys(data2[data2.length - (i + 1)])[0]);
+  }
+  return { hot, cold };
+}
+
+sortObject = (entry) => {
+  const sortKeysBy = function (obj, comparator) {
+    var keys = _.sortBy(_.keys(obj), function (key) {
+      return comparator ? comparator(obj[key], key) : key;
+    });
+    console.log(keys);
+    return _.map(keys, function (key) {
+      return { [key]: obj[key] };
+    });
+  };
+
+  const sortable = sortKeysBy(entry, function (value, key) {
+    return value;
+  });
+
+  return sortable;
+};
 module.exports = {
   placeBet,
   winGamePay,
@@ -154,5 +192,5 @@ module.exports = {
   addGameResult,
   getLastrecord,
   getCurrentBetData,
-
+  getHotCold,
 };

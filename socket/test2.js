@@ -1,57 +1,41 @@
-//Get Flip Pages for andarBaharResult
-getFlipPages = (pages, result) => {
+const _ = require("lodash");
 
-    let randomNumbers = [];
-    for (let i = 0; i < 52; i++) {
-        let randomNumber = Math.floor(Math.random() * 52);
-        while (randomNumbers.includes(randomNumber)) {
-            randomNumber = Math.floor(Math.random() * 52);
-        }
-        randomNumbers[i] = randomNumber;
-        if (pages.includes(randomNumber))
-            break;
+let res = [
+  3, 4, 2, 4, 24, 15, 13, 24, 23, 24, 2, 34, 12, 3, 25, 23, 35, 26, 5, 7, 6, 2,
+  34, 4,
+];
 
-    }
-    if (result != 0)
-        if (result == "andar") {
-            if (randomNumbers.length % 2 != 0)
-                return randomNumbers
-            else
-                randomNumbers.shift();
-        }
-        else {
-            if (randomNumbers.length % 2 == 0)
-                return randomNumbers
-            else if (randomNumbers.length > 2)
-                randomNumbers.shift();
-            else
-                randomNumbers.unshift(pages[0] + 1);
-        }
-
-    return randomNumbers;
+let data = {};
+for (let element of res) {
+  data[element] = data[element] ? data[element] + 1 : 1;
 }
+console.log(data);
 
+sortObject = (entry) => {
+  const sortKeysBy = function (obj, comparator) {
+    var keys = _.sortBy(_.keys(obj), function (key) {
+      return comparator ? comparator(obj[key], key) : key;
+    });
+    console.log(keys);
+    return _.map(keys, function (key) {
+      return { [key]: obj[key] };
+    });
+  };
 
-//get all Pages
+  const sortable = sortKeysBy(entry, function (value, key) {
+    return value;
+  });
 
-getPages = (page) => {
-    if (page > 38)
-        return [page, page - 13, page - 26, page - 29]
-    else if (page > 25)
-        return [page, page + 13, page - 26, page - 13]
-    else if (page > 12)
-        return [page, page + 13, page + 26, page - 13]
-    else return [page, page + 13, page + 26, page + 39]
-
+  return sortable;
+};
+let data2 = sortObject(data);
+console.log(data2);
+let cool = [];
+let hot = [];
+let i = 1;
+for (let i = 0; i < 5; i++) {
+  cool.push(Object.keys(data2[i])[0]);
+  hot.push(Object.keys(data2[data2.length - (i + 1)])[0]);
 }
-
-for (i = 0; i < 10; i++) {
-    let pages = getPages(4)
-    let finalPages = getFlipPages(pages, "bahar")
-
-    console.log("Pages", pages);
-    console.log("");
-    console.log(finalPages, finalPages.length);
-    console.log("");
-    console.log("");
-}
+console.log("cool", cool);
+console.log("hot", hot);
