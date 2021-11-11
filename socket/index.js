@@ -238,6 +238,7 @@ setInterval(async () => {
     winningPercent.rouletteTimer60 = p.rouletteTimer60;
   }
   if (new Date().getMinutes() % 15 == 0 && new Date().getSeconds == 1) {
+    console.log("call thayu");
     let hotAndCold = await getHotCold("rouletteTimer40");
     games.rouletteTimer40.hot = hotAndCold.hot;
     games.rouletteTimer40.cold = hotAndCold.cold;
