@@ -155,7 +155,7 @@ async function getHotCold(gameName) {
   let data = {};
 
   for (let element of res) {
-    data[element] = data[element] ? data[element] + 1 : 1;
+    data[element.result] = data[element.result] ? data[element.result] + 1 : 1;
   }
 
   let data2 = sortObject(data);
