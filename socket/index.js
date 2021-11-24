@@ -168,7 +168,7 @@ io.on("connection", (socket) => {
       let game = { position: {} };
       for (const pos of position) {
         for (const num of pos[Object.keys(pos)[0]]) {
-          let wonAmount = (pos.amount * 36) / pos[Object.keys(pos)[0]].length;
+          let wonAmount = (pos.amount * 35) / pos[Object.keys(pos)[0]].length;
           game.position = immutable.update(game.position, [num], (v) =>
             v ? v + wonAmount : wonAmount
           );
@@ -408,7 +408,7 @@ flushAll = (gameName) => {
 playCasino = (gameName, position, result) => {
   for (const pos of position) {
     for (const num of pos[Object.keys(pos)[0]]) {
-      let wonAmount = (pos.amount * 36) / pos[Object.keys(pos)[0]].length;
+      let wonAmount = (pos.amount * 35) / pos[Object.keys(pos)[0]].length;
       games[gameName].position = immutable.update(
         games[gameName].position,
         [num],
