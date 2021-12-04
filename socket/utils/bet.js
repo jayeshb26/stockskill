@@ -11,6 +11,7 @@ async function placeBet(playerId, game, position, betPoint) {
     const executive = await User.findById(classic.referralId);
     const premium = await User.findById(executive.referralId);
     const agent = await User.findById(premium.referralId);
+    let bet = "";
     if (player.creditPoint >= betPoint) {
       bet = await Bet.create({
         playerId,

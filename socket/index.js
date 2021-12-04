@@ -291,12 +291,13 @@ getResultRoulette = (position) => {
 getResult = async (gameName, stopNum) => {
   let result = "";
   let resultArray = [];
+  let sortResult = "";
+  let lowestResult = "";
   games[gameName].startTime = new Date().getTime() / 1000;
 
   if (Object.keys(games[gameName].position).length != undefined) {
-    console.log(gameName, "Solo    Before : ", games[gameName].position);
-    let sortResult = sortObject(games[gameName].position);
-    console.log(gameName, "After : ", sortResult);
+    sortResult = sortObject(games[gameName].position);
+
     for (const num of sortResult) {
       let value = Object.values(num)[0];
       let key = Object.keys(num)[0];
@@ -305,6 +306,7 @@ getResult = async (gameName, stopNum) => {
           resultArray = [];
         resultArray.push(key);
         result = resultArray[Math.floor(Math.random() * resultArray.length)];
+        lowestResult = result;
       }
       if (value > games[gameName].adminBalance) {
         break;
@@ -325,7 +327,7 @@ getResult = async (gameName, stopNum) => {
       if (counter == 100) {
         //aaya Error mali ti
 
-        result = Object.keys(sortResult[0])[0];
+        result = lowestResult;
         break;
       }
     }
