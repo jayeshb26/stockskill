@@ -253,6 +253,7 @@ getResultRoulette = (position) => {
   let result = "";
   let resultArray = [];
   let sortResult = sortObject(position);
+  let lowestResult = "";
   console.log("Roulette Royal SortResult is", sortResult);
 
   for (const num of sortResult) {
@@ -263,6 +264,7 @@ getResultRoulette = (position) => {
       if (position[result] != position[key]) resultArray = [];
       resultArray.push(key);
       result = resultArray[Math.floor(Math.random() * resultArray.length)];
+      lowestResult = result;
     }
     if (value > games.roulette.adminBalance) {
       break;
@@ -278,7 +280,7 @@ getResultRoulette = (position) => {
       result = Math.round(Math.random() * 36);
       counter++;
       if (counter == 100) {
-        result = Object.keys(sortResult[0])[0];
+        result = lowestResult;
         break;
       }
     }
