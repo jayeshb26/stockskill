@@ -410,9 +410,14 @@ flushAll = (gameName) => {
 };
 
 playCasino = (gameName, position, result) => {
+  let numMultiply = 36;
   for (const pos of position) {
+
     for (const num of pos[Object.keys(pos)[0]]) {
-      let wonAmount = (pos.amount * 35) / pos[Object.keys(pos)[0]].length;
+      numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35
+
+
+      let wonAmount = (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
       games[gameName].position = immutable.update(
         games[gameName].position,
         [num],
