@@ -221,11 +221,11 @@ io.on("connection", (socket) => {
 setInterval(async () => {
   // if (new Date().getHours() > 7 && new Date().getHours() < 22) {
 
-  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 50) {
+  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 53) {
     getResult("rouletteTimer40", 36);
   }
 
-  if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 65) {
+  if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
     getResult("rouletteTimer60", 36);
   }
 
@@ -412,12 +412,11 @@ flushAll = (gameName) => {
 playCasino = (gameName, position, result) => {
   let numMultiply = 36;
   for (const pos of position) {
-
     for (const num of pos[Object.keys(pos)[0]]) {
-      numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35
+      numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
 
-
-      let wonAmount = (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
+      let wonAmount =
+        (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
       games[gameName].position = immutable.update(
         games[gameName].position,
         [num],
