@@ -81,7 +81,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 exports.loginPlayer = asyncHandler(async (req, res, next) => {
   const { userName, password } = req.body;
   //userName and password fields are required
-  console.log("userName : ", userName, "          password : ", password);
+  console.log("userName : ", userName, "password : ", password);
   if (!userName && !password) {
     return next(
       new ErrorResponse("userName and password fields must be required"),

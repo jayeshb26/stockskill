@@ -304,8 +304,9 @@ getResult = async (gameName, stopNum) => {
       let value = Object.values(num)[0];
       let key = Object.keys(num)[0];
       if (value < games[gameName].adminBalance) {
-        if (games[gameName].position[result] != games[gameName].position[key])
+        if (games[gameName].position[result] != games[gameName].position[key]) {
           resultArray = [];
+        }
         resultArray.push(key);
         result = resultArray[Math.floor(Math.random() * resultArray.length)];
         lowestResult = result;
@@ -328,8 +329,10 @@ getResult = async (gameName, stopNum) => {
 
       if (counter == 100) {
         //aaya Error mali ti
-
-        result = lowestResult;
+        if (lowestResult != "")
+          result = lowestResult;
+        else
+          result = Math.round(Math.random() * stopNum);
         break;
       }
     }
