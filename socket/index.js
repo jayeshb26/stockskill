@@ -280,8 +280,12 @@ getResultRoulette = (position) => {
       result = Math.round(Math.random() * 36);
       counter++;
       if (counter == 100) {
-        result = lowestResult;
+        if (lowestResult != "")
+          result = lowestResult;
+        else
+          result = Math.round(Math.random() * stopNum);
         break;
+
       }
     }
   }
