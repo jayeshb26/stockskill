@@ -233,9 +233,14 @@ setInterval(async () => {
   if (new Date().getMinutes() == 1 && new Date().getSeconds() == 1) {
     let p = await getAdminPer();
     console.log("This is the data", p);
-    winningPercent.roulette = p.roulette;
-    winningPercent.rouletteTimer40 = p.rouletteTimer40;
-    winningPercent.rouletteTimer60 = p.rouletteTimer60;
+    if (p.isManual) {
+      winningPercent.roulette = p.roulette;
+      winningPercent.rouletteTimer40 = p.rouletteTimer40;
+      winningPercent.rouletteTimer60 = p.rouletteTimer60;
+    }
+    else {
+      
+    }
   }
   if (new Date().getMinutes() % 10 == 0 && new Date().getSeconds() == 1) {
     console.log("call thayu");

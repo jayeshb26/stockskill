@@ -14,6 +14,8 @@ const WinningSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    isManual: Boolean,
+    listArray: [Number]
   },
   { timestamps: true }
 );
