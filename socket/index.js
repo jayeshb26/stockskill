@@ -235,7 +235,7 @@ setInterval(async () => {
   }
 
   //Get Admin Percentage
-  if (new Date().getMinutes() == 1 && new Date().getSeconds() == 1) {
+  if (parseInt(new Date().getMinutes()) % 3 == 0 && new Date().getSeconds() == 1) {
     let p = await getAdminPer();
     console.log("This is the data", p);
     if (p.isManual) {
