@@ -195,7 +195,7 @@ io.on("connection", (socket) => {
 
       console.log(
         "Roullete Royal Admin balance is: ",
-        games.roulette.winningPercent[gameName],
+        games.roulette.adminBalance,
         "& result is : ",
         result
       );
