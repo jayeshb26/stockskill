@@ -28,6 +28,9 @@ let games = {
   },
   roulette: { adminBalance: 0 },
 };
+
+let isManual = false;
+let listArray = [];
 //users: use for store game Name so when user leave room than we can used
 let users = {};
 //used for when he won the match
@@ -197,6 +200,8 @@ io.on("connection", (socket) => {
         result
       );
     }
+    if (!isManual && listArray.length != 0)
+      winningPercent.roulette = listArray[Math.floor(Math.random() * listArray.length)];;
   });
 
   //Disconnect the users
@@ -237,9 +242,11 @@ setInterval(async () => {
       winningPercent.roulette = p.roulette;
       winningPercent.rouletteTimer40 = p.rouletteTimer40;
       winningPercent.rouletteTimer60 = p.rouletteTimer60;
+      isManual = p.isManual;
+      listArray = p.listArray;
     }
     else {
-      
+
     }
   }
   if (new Date().getMinutes() % 10 == 0 && new Date().getSeconds() == 1) {
@@ -419,6 +426,9 @@ sortObject = (entry) => {
 flushAll = (gameName) => {
   games[gameName].position = {};
   transactions[gameName] = {};
+  if (!isManual && listArray.length != 0) {
+    winningPercent[gameName] = listArray[Math.floor(Math.random() * listArray.length)];
+  }
 };
 
 playCasino = (gameName, position, result) => {
