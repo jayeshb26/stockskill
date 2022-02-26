@@ -14,6 +14,14 @@ const WinningSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    spinToWin: {
+      type: Number,
+      default: 0,
+    },
+    manualSpin: {
+      type: Number,
+      default: 0,
+    },
     isManual: Boolean,
     listArray: [Number]
   },

@@ -27,6 +27,14 @@ let games = {
     cold: [],
   },
   roulette: { adminBalance: 0 },
+  spinToWin: {
+    startTime: new Date().getTime() / 1000,
+    position: {},
+    adminBalance: 0,
+    hot: [],
+    cold: [],
+  },
+  manualSpin: { adminBalance: 0 },
 };
 
 let isManual = false;
@@ -37,7 +45,7 @@ let users = {};
 let players = {};
 //TransactionId
 let transactions = {};
-let winningPercent = { rouletteTimer40: 90, rouletteTimer60: 90, roulette: 90 };
+let winningPercent = { rouletteTimer40: 90, rouletteTimer60: 90, roulette: 90, spinToWin: 90, manualSpin: 90 };
 io.on("connection", (socket) => {
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
@@ -123,7 +131,8 @@ io.on("connection", (socket) => {
         console.log("sandip Shiroya");
         playCasino(gameName, position, result);
       }
-
+      else if (gameName == "spinToWin")
+        playSpinToWin(gameName, position, result)
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
       if (betPoint)
@@ -229,7 +238,9 @@ setInterval(async () => {
   if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 53) {
     getResult("rouletteTimer40", 36);
   }
-
+  if (new Date().getTime() / 1000 > games.spinToWin.startTime + 60) {
+    getResult("spinToWin", 9);
+  }
   if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
     getResult("rouletteTimer60", 36);
   }
@@ -453,4 +464,18 @@ playCasino = (gameName, position, result) => {
   }
   console.log("This is data", games);
   console.log("This is the Dtata: ", games[gameName].position);
+};
+playSpinToWin = (position, result) => {
+  for (const pos in position) {
+    games.spinToWin.position = immutable.update(
+      games.spinToWin.position,
+      [pos],
+      (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
+    );
+    transactions.spinToWin = immutable.update(
+      transactions.spinToWin,
+      [pos, result],
+      (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
+    );
+  }
 };
