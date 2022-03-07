@@ -118,20 +118,22 @@ async function getLastrecord(gameName, playerId) {
   try {
     if (gameName != "roulette")
       result = await WinResult.find({ gameName })
-        .select({ result: 1, _id: 0 })
+        .select({ result: 1, x: 1, _id: 0 })
         .sort("-createdAt")
         .limit(15);
     let data = [];
+    let x = [];
 
     if (gameName != "roulette")
       for (let res of result) {
         data.push(res.result);
+        x.push(res.x);
       }
 
     // if (gameName == "rouletteMini")
     //   return { records: data, take: 0 }
     // else
-    return { records: data };
+    return { records: data, x: x };
   } catch (err) {
     console.log("Error on getLastrecord", err.message);
     return err.message;
