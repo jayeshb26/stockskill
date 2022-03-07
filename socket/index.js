@@ -329,6 +329,7 @@ getResult = async (gameName, stopNum) => {
   let resultArray = [];
   let sortResult = "";
   let lowestResult = "";
+  let x = 1;
   games[gameName].startTime = new Date().getTime() / 1000;
 
   if (Object.keys(games[gameName].position).length != undefined) {
@@ -369,11 +370,22 @@ getResult = async (gameName, stopNum) => {
       }
     }
   //change thayu last ma aa
+  x = Math.floor(Math.random() * 4) + 1;
+
+  if (gameName == "spinToWin") {
+    if (games[gameName].adminBalance > games[gameName].position[result] * x) {
+      for (const transId in transactions[gameName][result]) {
+        transactions[gameName][result][transId] =
+          transactions[gameName][result][transId] * x;
+      }
+    } else x = 1;
+  }
 
   io.in(gameName).emit("res", {
     data: {
       gameName,
       data: result,
+      x,
     },
     en: "result",
     status: 1,
@@ -382,7 +394,7 @@ getResult = async (gameName, stopNum) => {
   if (games[gameName].position[result])
     games[gameName].adminBalance -= games[gameName].position[result];
 
-  await addGameResult(gameName, result);
+  await addGameResult(gameName, result, x);
 
   // Pay Out of the winners
   await payTransaction(gameName, result);

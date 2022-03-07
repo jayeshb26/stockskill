@@ -98,9 +98,9 @@ async function winGamePay(price, betId, winPosition, gameName) {
 }
 
 //Add result of the Game
-async function addGameResult(gameName, result) {
+async function addGameResult(gameName, result, x) {
   try {
-    await WinResult.create({ gameName, result });
+    await WinResult.create({ gameName, result, x });
     await Bet.updateMany(
       { $and: [{ game: gameName }, { winPosition: "" }] },
       { winPosition: result }
