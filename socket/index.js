@@ -78,6 +78,7 @@ io.on("connection", (socket) => {
         creditPoint: user.creditPoint,
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         numbers: numbers.records,
+        x: numbers.x,
         hot: games[gameName].hot,
         cold: games[gameName].cold,
         gameName,
