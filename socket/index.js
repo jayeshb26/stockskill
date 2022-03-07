@@ -45,7 +45,13 @@ let users = {};
 let players = {};
 //TransactionId
 let transactions = {};
-let winningPercent = { rouletteTimer40: 90, rouletteTimer60: 90, roulette: 90, spinToWin: 90, manualSpin: 90 };
+let winningPercent = {
+  rouletteTimer40: 90,
+  rouletteTimer60: 90,
+  roulette: 90,
+  spinToWin: 90,
+  manualSpin: 90,
+};
 io.on("connection", (socket) => {
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
@@ -58,7 +64,7 @@ io.on("connection", (socket) => {
       console.log("send join data");
       return socket.emit("res", {
         data: {
-          user,
+          creditPoint: user.creditPoint,
           gameName,
         },
         en: "join",
@@ -69,7 +75,7 @@ io.on("connection", (socket) => {
     socket.join(gameName);
     socket.emit("res", {
       data: {
-        user,
+        creditPoint: user.creditPoint,
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         numbers: numbers.records,
         hot: games[gameName].hot,
@@ -130,9 +136,8 @@ io.on("connection", (socket) => {
       if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
         console.log("sandip Shiroya");
         playCasino(gameName, position, result);
-      }
-      else if (gameName == "spinToWin")
-        playSpinToWin(gameName, position, result)
+      } else if (gameName == "spinToWin")
+        playSpinToWin(gameName, position, result);
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
       if (betPoint)
@@ -210,7 +215,8 @@ io.on("connection", (socket) => {
       );
     }
     if (!isManual && listArray.length != 0)
-      winningPercent.roulette = listArray[Math.floor(Math.random() * listArray.length)];;
+      winningPercent.roulette =
+        listArray[Math.floor(Math.random() * listArray.length)];
   });
 
   //Disconnect the users
@@ -246,7 +252,10 @@ setInterval(async () => {
   }
 
   //Get Admin Percentage
-  if (parseInt(new Date().getMinutes()) % 3 == 0 && new Date().getSeconds() == 1) {
+  if (
+    parseInt(new Date().getMinutes()) % 3 == 0 &&
+    new Date().getSeconds() == 1
+  ) {
     let p = await getAdminPer();
     console.log("This is the data", p);
     if (p.isManual) {
@@ -255,9 +264,7 @@ setInterval(async () => {
       winningPercent.rouletteTimer60 = p.rouletteTimer60;
       isManual = p.isManual;
       listArray = p.listArray;
-    }
-    else {
-
+    } else {
     }
   }
   if (new Date().getMinutes() % 10 == 0 && new Date().getSeconds() == 1) {
@@ -268,6 +275,9 @@ setInterval(async () => {
     hotAndCold = await getHotCold("rouletteTimer60");
     games.rouletteTimer60.hot = hotAndCold.hot;
     games.rouletteTimer60.cold = hotAndCold.cold;
+    hotAndCold = await getHotCold("spinToWin");
+    games.spinToWin.hot = hotAndCold.hot;
+    games.spinToWin.cold = hotAndCold.cold;
   }
   //}
 }, 1000);
@@ -303,12 +313,9 @@ getResultRoulette = (position) => {
       result = Math.round(Math.random() * 36);
       counter++;
       if (counter == 100) {
-        if (lowestResult != "")
-          result = lowestResult;
-        else
-          result = Math.round(Math.random() * stopNum);
+        if (lowestResult != "") result = lowestResult;
+        else result = Math.round(Math.random() * stopNum);
         break;
-
       }
     }
   }
@@ -356,10 +363,8 @@ getResult = async (gameName, stopNum) => {
 
       if (counter == 100) {
         //aaya Error mali ti
-        if (lowestResult != "")
-          result = lowestResult;
-        else
-          result = Math.round(Math.random() * stopNum);
+        if (lowestResult != "") result = lowestResult;
+        else result = Math.round(Math.random() * stopNum);
         break;
       }
     }
@@ -438,7 +443,8 @@ flushAll = (gameName) => {
   games[gameName].position = {};
   transactions[gameName] = {};
   if (!isManual && listArray.length != 0) {
-    winningPercent[gameName] = listArray[Math.floor(Math.random() * listArray.length)];
+    winningPercent[gameName] =
+      listArray[Math.floor(Math.random() * listArray.length)];
   }
 };
 
