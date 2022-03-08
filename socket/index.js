@@ -220,9 +220,6 @@ io.on("connection", (socket) => {
         listArray[Math.floor(Math.random() * listArray.length)];
   });
 
-
-
-
   socket.on("placeBetManualSpin", async ({ playerId, position, betPoint }) => {
     const transId = await placeBet(playerId, "roulette", position, betPoint);
     console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
@@ -248,7 +245,7 @@ io.on("connection", (socket) => {
       socket.emit("res", {
         data: {
           handId: transId,
-          gameName: "roulette",
+          gameName: "manualSpin",
           data: result,
           winAmount,
         },
@@ -372,7 +369,6 @@ getResultRoulette = (position) => {
   if (position[result]) games.roulette.adminBalance -= position[result];
   return result;
 };
-
 
 getResultManualSpin = (position) => {
   let result = "";
