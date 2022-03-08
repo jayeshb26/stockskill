@@ -64,7 +64,7 @@ async function placeBet(playerId, game, position, betPoint) {
   }
 }
 
-async function winGamePay(price, betId, winPosition, gameName) {
+async function winGamePay(price, betId, winPosition) {
   try {
     console.log(
       "WInGame Pay: price : ",
@@ -74,7 +74,7 @@ async function winGamePay(price, betId, winPosition, gameName) {
       " winPosition : ",
       winPosition
     );
-    if (gameName == "andarBahar2") gameName = "andarBahar";
+
 
     const betData = await Bet.findByIdAndUpdate(betId, {
       $inc: { won: price },
@@ -82,13 +82,9 @@ async function winGamePay(price, betId, winPosition, gameName) {
     let player = "";
 
     player =
-      gameName == "rouletteMini"
-        ? await User.findByIdAndUpdate(betData.playerId, {
-            $inc: { creditPoint: price, wonPoint: price },
-          })
-        : await User.findByIdAndUpdate(betData.playerId, {
-            $inc: { creditPoint: price, wonPoint: price, winPosition },
-          });
+      await User.findByIdAndUpdate(betData.playerId, {
+        $inc: { creditPoint: price, wonPoint: price, winPosition },
+      });
 
     return betData.playerId;
   } catch (err) {

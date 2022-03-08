@@ -196,7 +196,7 @@ io.on("connection", (socket) => {
       console.log("Result is ", result);
       let winAmount = 0;
       if (game.position[result]) winAmount = game.position[result];
-      await winGamePay(winAmount, transId, result, "roulette");
+      await winGamePay(winAmount, transId, result);
       socket.emit("res", {
         data: {
           handId: transId,
@@ -244,7 +244,7 @@ io.on("connection", (socket) => {
       console.log("Result is ", result);
       let winAmount = 0;
       if (game.position[result]) winAmount = game.position[result];
-      await winGamePay(winAmount, transId, result, "roulette");
+      await winGamePay(winAmount, transId, result);
       socket.emit("res", {
         data: {
           handId: transId,
