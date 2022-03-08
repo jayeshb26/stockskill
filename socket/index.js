@@ -240,7 +240,7 @@ io.on("connection", (socket) => {
           );
         }
       }
-      let result = getResultRoulette(game.position);
+      let result = getResultManualSpin(game.position);
       console.log("Result is ", result);
       let winAmount = 0;
       if (game.position[result]) winAmount = game.position[result];
