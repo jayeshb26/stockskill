@@ -220,6 +220,54 @@ io.on("connection", (socket) => {
         listArray[Math.floor(Math.random() * listArray.length)];
   });
 
+
+
+
+  socket.on("placeBetManualSpin", async ({ playerId, position, betPoint }) => {
+    const transId = await placeBet(playerId, "roulette", position, betPoint);
+    console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
+
+    if (transId != 0) {
+      if (betPoint)
+        games.roulette.adminBalance +=
+          (betPoint * winningPercent.roulette) / 100;
+      let game = { position: {} };
+      for (const pos of position) {
+        for (const num of pos[Object.keys(pos)[0]]) {
+          let wonAmount = (pos.amount * 9) / pos[Object.keys(pos)[0]].length;
+          game.position = immutable.update(game.position, [num], (v) =>
+            v ? v + wonAmount : wonAmount
+          );
+        }
+      }
+      let result = getResultRoulette(game.position);
+      console.log("Result is ", result);
+      let winAmount = 0;
+      if (game.position[result]) winAmount = game.position[result];
+      await winGamePay(winAmount, transId, result, "roulette");
+      socket.emit("res", {
+        data: {
+          handId: transId,
+          gameName: "roulette",
+          data: result,
+          winAmount,
+        },
+        en: "result",
+        status: 1,
+      });
+
+      console.log(
+        "Roullete Royal Admin balance is: ",
+        games.roulette.adminBalance,
+        "& result is : ",
+        result
+      );
+    }
+    if (!isManual && listArray.length != 0)
+      winningPercent.roulette =
+        listArray[Math.floor(Math.random() * listArray.length)];
+  });
+
   //Disconnect the users
   socket.on("disconnect", () => {
     if (users[socket.id]) {
@@ -315,7 +363,50 @@ getResultRoulette = (position) => {
       counter++;
       if (counter == 100) {
         if (lowestResult != "") result = lowestResult;
-        else result = Math.round(Math.random() * stopNum);
+        else result = Math.round(Math.random() * 36);
+        break;
+      }
+    }
+  }
+  //await addGameResult("roulette", result);
+  if (position[result]) games.roulette.adminBalance -= position[result];
+  return result;
+};
+
+
+getResultManualSpin = (position) => {
+  let result = "";
+  let resultArray = [];
+  let sortResult = sortObject(position);
+  let lowestResult = "";
+  console.log("Roulette Royal SortResult is", sortResult);
+
+  for (const num of sortResult) {
+    let value = Object.values(num)[0];
+    let key = Object.keys(num)[0];
+    console.log("value : ", value, " key : ", key);
+    if (value < games.roulette.adminBalance) {
+      if (position[result] != position[key]) resultArray = [];
+      resultArray.push(key);
+      result = resultArray[Math.floor(Math.random() * resultArray.length)];
+      lowestResult = result;
+    }
+    if (value > games.roulette.adminBalance) {
+      break;
+    }
+  }
+  console.log("Roullete royal Result is :", result, "num : ", position[result]);
+  if (result == "") result = Math.round(Math.random() * 9);
+  let counter = 0;
+  if (position[result]) {
+    console.log("Akhir mei andar aaya", position[result]);
+    while (games.roulette.adminBalance < position[result]) {
+      console.log("pasand nahi aaya", result);
+      result = Math.round(Math.random() * 9);
+      counter++;
+      if (counter == 100) {
+        if (lowestResult != "") result = lowestResult;
+        else result = Math.round(Math.random() * 9);
         break;
       }
     }
