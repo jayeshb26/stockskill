@@ -77,7 +77,7 @@ async function winGamePay(price, betId, winPosition) {
 
 
     const betData = await Bet.findByIdAndUpdate(betId, {
-      $inc: { won: price },
+      $inc: { won: price },winPosition
     });
     let player = "";
 
