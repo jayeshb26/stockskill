@@ -131,9 +131,16 @@ io.on("connection", (socket) => {
 
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
     const result = await placeBet(playerId, gameName, position, betPoint);
-    console.log(gameName, "  :  ", position, " Bet Point :  ", betPoint);
+    console.log(
+      playerId,
+      gameName,
+      "  :  ",
+      position,
+      " Bet Point :  ",
+      betPoint
+    );
     console.log(result);
-    if (result != 0) {
+    if (result != 0 || result != undefined) {
       if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
         console.log("sandip Shiroya");
         playCasino(gameName, position, result);
@@ -571,15 +578,15 @@ playCasino = (gameName, position, result) => {
   console.log("This is data", games);
   console.log("This is the Dtata: ", games[gameName].position);
 };
-playSpinToWin = (position, result) => {
+playSpinToWin = (gameName, position, result) => {
   for (const pos in position) {
-    games.spinToWin.position = immutable.update(
-      games.spinToWin.position,
+    games.[gameName].position = immutable.update(
+      games.[gameName].position,
       [pos],
       (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
     );
-    transactions.spinToWin = immutable.update(
-      transactions.spinToWin,
+    transactions.[gameName] = immutable.update(
+      transactions.[gameName],
       [pos, result],
       (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
     );
