@@ -194,7 +194,8 @@ io.on("connection", (socket) => {
       for (const pos of position) {
         for (const num of pos[Object.keys(pos)[0]]) {
           numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
-          let wonAmount = (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
+          let wonAmount =
+            (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
           game.position = immutable.update(game.position, [num], (v) =>
             v ? v + wonAmount : wonAmount
           );
@@ -581,13 +582,13 @@ playCasino = (gameName, position, result) => {
 };
 playSpinToWin = (gameName, position, result) => {
   for (const pos in position) {
-    games.[gameName].position = immutable.update(
-      games.[gameName].position,
+    games[gameName].position = immutable.update(
+      games[gameName].position,
       [pos],
       (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
     );
-    transactions.[gameName] = immutable.update(
-      transactions.[gameName],
+    transactions[gameName] = immutable.update(
+      transactions[gameName],
       [pos, result],
       (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
     );
