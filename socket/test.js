@@ -1,1 +1,23 @@
-let possition = [{ "StraightUp": [0], "amount": 10 }, { "Red": [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36], "amount": 10 }, { "Black": [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35], "amount": 10 }]
+playCasino = (gameName, position, result) => {
+    let numMultiply = 36;
+    for (const pos of position) {
+        for (const num of pos[Object.keys(pos)[0]]) {
+            numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
+
+            let wonAmount =
+                (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
+            games[gameName].position = immutable.update(
+                games[gameName].position,
+                [num],
+                (v) => (v ? v + wonAmount : wonAmount)
+            );
+            transactions[gameName] = immutable.update(
+                transactions[gameName],
+                [num, result],
+                (v) => (v ? v + wonAmount : wonAmount)
+            );
+        }
+    }
+    console.log("This is data", games);
+    console.log("This is the Dtata: ", games[gameName].position);
+};

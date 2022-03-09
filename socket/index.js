@@ -185,7 +185,7 @@ io.on("connection", (socket) => {
   socket.on("placeBetRoulette", async ({ playerId, position, betPoint }) => {
     const transId = await placeBet(playerId, "roulette", position, betPoint);
     console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
-
+    let numMultiply = 36;
     if (transId != 0) {
       if (betPoint)
         games.roulette.adminBalance +=
@@ -193,7 +193,8 @@ io.on("connection", (socket) => {
       let game = { position: {} };
       for (const pos of position) {
         for (const num of pos[Object.keys(pos)[0]]) {
-          let wonAmount = (pos.amount * 35) / pos[Object.keys(pos)[0]].length;
+          numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
+          let wonAmount = (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
           game.position = immutable.update(game.position, [num], (v) =>
             v ? v + wonAmount : wonAmount
           );
