@@ -16,6 +16,11 @@ const PointRequestSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    fromId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timetamps: true }
 );

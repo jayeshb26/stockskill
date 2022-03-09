@@ -123,7 +123,7 @@ exports.addPointRequest = asyncHandler(async (req, res, next) => {
     point: req.body.point,
     Comment: req.body.Comment,
     playerId: req.user.id,
-    referralId: req.user.referralId
+    fromId: req.user.referralId
   });
   res.status(200).json({ success: true, data: point });
 });
