@@ -124,6 +124,7 @@ UserSchema.methods.getSignedJwtToken = function () {
       userName: this.userName,
       creditPoint: this.creditPoint,
       transactionPin: this.transactionPin,
+      referralId: this.referralId
     },
     process.env.JWT_SECRET,
     {
