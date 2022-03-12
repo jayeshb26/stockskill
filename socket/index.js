@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
           status: 1,
         });
       }
-    retailers[user._id] = socket.id;
+    players[user._id] = socket.id;
   });
 
   //Join Event When Application is Start
