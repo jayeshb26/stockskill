@@ -1,6 +1,8 @@
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/User");
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890", 6);
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 const ForgetPassword = require("../models/ForgetPassword");
@@ -335,5 +337,16 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 //Access     Private/Admin
 exports.setForgetPassword = asyncHandler(async (req, res, next) => {
   const user = await ForgetPassword.create(req.body.userName);
-  res.status(200).json({ success: true, data: user });
+  let password = nanoid();
+  let data = User.findOne({ userName: req.body.userName });
+  if (data.length != 1)
+    return next(new ErrorResponse("Please check UserName", 401));
+  else User.findOneAndUpdate({ userName: req.body.userName }, password);
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      data: "Password updated please contact Admin and get Your password!",
+    });
 });
