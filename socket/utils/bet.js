@@ -34,7 +34,7 @@ async function placeBet(playerId, game, position, betPoint) {
         premiumCommission: (betPoint * premium.commissionPercentage) / 100,
         agentCommission: (betPoint * agent.commissionPercentage) / 100,
       });
-      console.log("Sandip****************1")
+      console.log("Sandip****************1");
       await User.findByIdAndUpdate(playerId, {
         $inc: {
           creditPoint: -betPoint,
@@ -43,25 +43,25 @@ async function placeBet(playerId, game, position, betPoint) {
         },
         lastBetAmount: betPoint,
       });
-      console.log("Sandip****************2")
+      console.log("Sandip****************2");
       await User.findByIdAndUpdate(player.referralId, {
         $inc: {
           commissionPoint: (betPoint * classic.commissionPercentage) / 100,
         },
       });
-      console.log("Sandip****************3")
+      console.log("Sandip****************3");
       await User.findByIdAndUpdate(classic.referralId, {
         $inc: {
           commissionPoint: (betPoint * executive.commissionPercentage) / 100,
         },
       });
-      console.log("Sandip****************4")
+      console.log("Sandip****************4");
       await User.findByIdAndUpdate(executive.referralId, {
         $inc: {
           commissionPoint: (betPoint * premium.commissionPercentage) / 100,
         },
       });
-      console.log("Sandip****************5")
+      console.log("Sandip****************5");
       await User.findByIdAndUpdate(premium.referralId, {
         $inc: {
           commissionPoint: (betPoint * agent.commissionPercentage) / 100,
@@ -87,16 +87,15 @@ async function winGamePay(price, betId, winPosition) {
       winPosition
     );
 
-
     const betData = await Bet.findByIdAndUpdate(betId, {
-      $inc: { won: price }, winPosition
+      $inc: { won: price },
+      winPosition,
     });
     let player = "";
 
-    player =
-      await User.findByIdAndUpdate(betData.playerId, {
-        $inc: { creditPoint: price, wonPoint: price, winPosition },
-      });
+    player = await User.findByIdAndUpdate(betData.playerId, {
+      $inc: { creditPoint: price, wonPoint: price, winPosition },
+    });
 
     return betData.playerId;
   } catch (err) {
@@ -106,9 +105,9 @@ async function winGamePay(price, betId, winPosition) {
 }
 
 //Add result of the Game
-async function addGameResult(gameName, result, x) {
+async function addGameResult(gameName, result, x, winningPercent) {
   try {
-    await WinResult.create({ gameName, result, x });
+    await WinResult.create({ gameName, result, x, winningPercent });
     await Bet.updateMany(
       { $and: [{ game: gameName }, { winPosition: "" }] },
       { winPosition: result }

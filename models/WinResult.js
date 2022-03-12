@@ -13,6 +13,10 @@ const WinResultSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    winningPercent: {
+      type: Number,
+      default: 90,
+    },
   },
   { timestamps: true }
 );

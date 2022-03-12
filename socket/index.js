@@ -53,11 +53,34 @@ let winningPercent = {
   manualSpin: 90,
 };
 io.on("connection", (socket) => {
+  socket.on("checkLogin", async ({ token }) => {
+    let user = await getUserInfoBytoken(token);
+
+    if (players[user._id])
+      if (players[user._id] != socket.id) {
+        io.to(players[user._id]).emit("res", {
+          data: "Some one use your Id to other device",
+          en: "logout",
+          status: 1,
+        });
+      }
+    retailers[user._id] = socket.id;
+  });
+
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
     let user = await getUserInfoBytoken(token);
     users[socket.id] = gameName;
     players[user._id] = socket.id;
+
+    if (!user.isActive) {
+      io.to(players[user._id]).emit("res", {
+        data: "Your Account is blocked please contact Admin",
+        en: "logout",
+        status: 1,
+      });
+    }
+
     console.log("Join call Game name is ", gameName);
     let numbers = await getLastrecord(gameName, user._id);
     if (gameName == "roulette") {
@@ -491,7 +514,7 @@ getResult = async (gameName, stopNum) => {
   if (games[gameName].position[result])
     games[gameName].adminBalance -= games[gameName].position[result];
 
-  await addGameResult(gameName, result, x);
+  await addGameResult(gameName, result, x, winningPercent[gameName]);
 
   // Pay Out of the winners
   await payTransaction(gameName, result);
