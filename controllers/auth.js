@@ -343,7 +343,8 @@ exports.setForgetPassword = asyncHandler(async (req, res, next) => {
   console.log("Call Data ", data);
   if (data == null)
     return next(new ErrorResponse("Please check UserName", 401));
-  else await User.findOneAndUpdate({ userName: req.body.userName }, password);
+  else
+    await User.findOneAndUpdate({ userName: req.body.userName }, { password });
 
   res.status(200).json({
     success: true,
