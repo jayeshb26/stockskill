@@ -336,17 +336,16 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 //@routes    Post /api/auth/forgetPassword
 //Access     Private/Admin
 exports.setForgetPassword = asyncHandler(async (req, res, next) => {
-  const user = await ForgetPassword.create(req.body.userName);
+  //const user = await ForgetPassword.create(req.body.userName);
   let password = nanoid();
   let data = User.findOne({ userName: req.body.userName });
+  console.log("Call Data ", data);
   if (data.length != 1)
     return next(new ErrorResponse("Please check UserName", 401));
   else User.findOneAndUpdate({ userName: req.body.userName }, password);
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      data: "Password updated please contact Admin and get Your password!",
-    });
+  res.status(200).json({
+    success: true,
+    data: "Password updated please contact Admin and get Your password!",
+  });
 });
