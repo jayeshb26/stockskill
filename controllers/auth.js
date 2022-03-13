@@ -338,9 +338,10 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 exports.setForgetPassword = asyncHandler(async (req, res, next) => {
   //const user = await ForgetPassword.create(req.body.userName);
   let password = nanoid();
+
   let data = await User.findOne({ userName: req.body.userName });
   console.log("Call Data ", data);
-  if (data.length != 1)
+  if (data != null)
     return next(new ErrorResponse("Please check UserName", 401));
   else await User.findOneAndUpdate({ userName: req.body.userName }, password);
 
