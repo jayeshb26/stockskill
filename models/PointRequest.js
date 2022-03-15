@@ -21,6 +21,37 @@ const PointRequestSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    DrTime: {
+      type: String,
+      default: () =>
+        new Date()
+          .toLocaleString("en-US", {
+            timeZone: "Asia/Calcutta",
+          })
+          .toString()
+          .split(",")[1],
+    },
+    DrDate: {
+      type: String,
+      default: () =>
+        new Date()
+          .toLocaleString("en-US", {
+            timeZone: "Asia/Calcutta",
+          })
+          .toString()
+          .split(",")[0]
+          .replace(/\//g, (x) => "-"),
+    },
+    createDate: {
+      type: String,
+      default: () =>
+        new Date()
+          .toLocaleString("en-US", {
+            timeZone: "Asia/Calcutta",
+          })
+          .toString(),
+    },
   },
   { timetamps: true }
 );
