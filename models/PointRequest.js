@@ -53,6 +53,6 @@ const PointRequestSchema = new mongoose.Schema(
           .toString(),
     },
   },
-  { timetamps: true }
+  { timestamps: true }
 );
 module.exports = mongoose.model("PointRequest", PointRequestSchema);
