@@ -36,7 +36,10 @@ let games = {
   },
   manualSpin: { adminBalance: 0 },
 };
+console.log( games["rouletteTimer40"].startTime);
+rouletteTimer40 = new Date().getTime() / 1000;
 
+console.log( rouletteTimer40);
 let isManual = false;
 let listArray = [];
 //users: use for store game Name so when user leave room than we can used
@@ -53,9 +56,10 @@ let winningPercent = {
   manualSpin: 90,
 };
 io.on("connection", (socket) => {
+  console.info(`Client gone [id=${socket.id}]`);
   socket.on("checkLogin", async ({ token }) => {
     let user = await getUserInfoBytoken(token);
-
+console.log(players[user._id]);
     if (players[user._id])
       if (players[user._id] != socket.id) {
         io.to(players[user._id]).emit("res", {
@@ -70,8 +74,9 @@ io.on("connection", (socket) => {
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
     let user = await getUserInfoBytoken(token);
+    console.log("user is ");
+    console.log(user);
     users[socket.id] = gameName;
-    players[user._id] = socket.id;
 
     if (!user.isActive) {
       io.to(players[user._id]).emit("res", {
@@ -523,7 +528,7 @@ getResult = async (gameName, stopNum) => {
 
 payTransaction = async (gameName, result) => {
   console.log(
-    "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",
+    "&&&&&&&&&&&&&&&&&&&&payTransaction&&&&&&&&&&&&&&&&&&&&&&&&",
     gameName,
     result,
     transactions[gameName]
