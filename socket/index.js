@@ -118,6 +118,7 @@ console.log(user._id);
     socket.emit("res", {
       data: {
         creditPoint: user.creditPoint,
+        user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         numbers: numbers.records,
@@ -182,7 +183,7 @@ console.log(user._id);
       " Bet Point :  ",
       betPoint
     );
-    console.log(result);
+    console.log("result::",result);
     if (result != 0 || result != undefined) {
       // if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
       //   console.log("sandip Shiroya");
@@ -353,34 +354,6 @@ setInterval(async () => {
     getResult("stockskill", 100);
   }
 
-  //Get Admin Percentage
-  if (
-    parseInt(new Date().getMinutes()) % 3 == 0 &&
-    new Date().getSeconds() == 1
-  ) {
-    let p = await getAdminPer();
-    console.log("This is the data", p);
-    if (p.isManual) {
-      winningPercent.roulette = p.roulette;
-      winningPercent.rouletteTimer40 = p.rouletteTimer40;
-      winningPercent.rouletteTimer60 = p.rouletteTimer60;
-      isManual = p.isManual;
-      listArray = p.listArray;
-    } else {
-    }
-  }
-  if (new Date().getMinutes() % 10 == 0 && new Date().getSeconds() == 1) {
-    console.log("call thayu");
-    // let hotAndCold = await getHotCold("rouletteTimer40");
-    // games.rouletteTimer40.hot = hotAndCold.hot;
-    // games.rouletteTimer40.cold = hotAndCold.cold;
-    // hotAndCold = await getHotCold("rouletteTimer60");
-    // games.rouletteTimer60.hot = hotAndCold.hot;
-    // games.rouletteTimer60.cold = hotAndCold.cold;
-    // hotAndCold = await getHotCold("spinToWin");
-    // games.spinToWin.hot = hotAndCold.hot;
-    // games.spinToWin.cold = hotAndCold.cold;
-  }
   //}
 }, 1000);
 
@@ -632,12 +605,12 @@ playSpinToWin = (gameName, position, result) => {
     games[gameName].position = immutable.update(
       games[gameName].position,
       [pos],
-      (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
+      (v) => (v ? v + position[pos] * 100 : position[pos] * 100)
     );
     transactions[gameName] = immutable.update(
       transactions[gameName],
       [pos, result],
-      (v) => (v ? v + position[pos] * 9 : position[pos] * 9)
+      (v) => (v ? v + position[pos] * 100 : position[pos] * 100)
     );
   }
 };
