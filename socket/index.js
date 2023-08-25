@@ -6,40 +6,49 @@ const {
   getAdminPer,
   addGameResult,
   getLastrecord,
+  getStockrecord,
   getCurrentBetData,
   getHotCold,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
+var moment = require('moment')
 let games = {
-  rouletteTimer40: {
+  // rouletteTimer40: {
+  //   startTime: new Date().getTime() / 1000,
+  //   position: {},
+  //   adminBalance: 0,
+  //   hot: [],
+  //   cold: [],
+  // },
+  // rouletteTimer60: {
+  //   startTime: new Date().getTime() / 1000,
+  //   position: {},
+  //   adminBalance: 0,
+  //   hot: [],
+  //   cold: [],
+  // },
+  stockskill: {
     startTime: new Date().getTime() / 1000,
     position: {},
     adminBalance: 0,
     hot: [],
     cold: [],
   },
-  rouletteTimer60: {
-    startTime: new Date().getTime() / 1000,
-    position: {},
-    adminBalance: 0,
-    hot: [],
-    cold: [],
-  },
-  roulette: { adminBalance: 0 },
-  spinToWin: {
-    startTime: new Date().getTime() / 1000,
-    position: {},
-    adminBalance: 0,
-    hot: [],
-    cold: [],
-  },
-  manualSpin: { adminBalance: 0 },
+  // roulette: { adminBalance: 0 },
+  // spinToWin: {
+  //   startTime: new Date().getTime() / 1000,
+  //   position: {},
+  //   adminBalance: 0,
+  //   hot: [],
+  //   cold: [],
+  // },
+  // manualSpin: { adminBalance: 0 },
 };
-console.log( games["rouletteTimer40"].startTime);
-rouletteTimer40 = new Date().getTime() / 1000;
+console.log( games["stockskill"].startTime);
+//ouletteTimer40 = new Date().getTime() / 1000;
 
-console.log( rouletteTimer40);
+//console.log( rouletteTimer40);
 let isManual = false;
 let listArray = [];
 //users: use for store game Name so when user leave room than we can used
@@ -54,12 +63,16 @@ let winningPercent = {
   roulette: 90,
   spinToWin: 90,
   manualSpin: 90,
+  stockskill: 90,
 };
 io.on("connection", (socket) => {
   console.info(`Client gone [id=${socket.id}]`);
+  socket.emit("res", socket.id
+  );
+
   socket.on("checkLogin", async ({ token }) => {
     let user = await getUserInfoBytoken(token);
-console.log(players[user._id]);
+console.log(user._id);
     if (players[user._id])
       if (players[user._id] != socket.id) {
         io.to(players[user._id]).emit("res", {
@@ -88,6 +101,7 @@ console.log(players[user._id]);
 
     console.log("Join call Game name is ", gameName);
     let numbers = await getLastrecord(gameName, user._id);
+    let stock = await getStockrecord(gameName, user._id);
     if (gameName == "roulette") {
       console.log("send join data");
       return socket.emit("res", {
@@ -104,11 +118,12 @@ console.log(players[user._id]);
     socket.emit("res", {
       data: {
         creditPoint: user.creditPoint,
+        date:moment().format('YYYY-MM-DD hh:mm:ss'),
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         numbers: numbers.records,
+        stock: stock.records,
         x: numbers.x,
-        hot: games[gameName].hot,
-        cold: games[gameName].cold,
+        
         gameName,
         gameData,
       },
@@ -136,25 +151,25 @@ console.log(players[user._id]);
   });
 
   socket.on("changeAdminBalance", async ({ adminId, data }) => {
-    try {
-      console.log(adminId, data);
-      let user = await getUserInfo(adminId);
-      console.log(user);
-      if (user.role == "Admin") {
-        games.rouletteTimer40.adminBalance = data.rouletteTimer40;
-        games.rouletteTimer60.adminBalance = data.rouletteTimer60;
-        console.log("data change", adminBalance);
-        socket.emit("resAdmin", {
-          data: games,
-        });
-      } else
-        socket.emit("res", {
-          data: "You are not authorised to access this information",
-          en: "error",
-        });
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   console.log(adminId, data);
+    //   let user = await getUserInfo(adminId);
+    //   console.log(user);
+    //   if (user.role == "Admin") {
+    //     games.rouletteTimer40.adminBalance = data.rouletteTimer40;
+    //     games.rouletteTimer60.adminBalance = data.rouletteTimer60;
+    //     console.log("data change", adminBalance);
+    //     socket.emit("resAdmin", {
+    //       data: games,
+    //     });
+    //   } else
+    //     socket.emit("res", {
+    //       data: "You are not authorised to access this information",
+    //       en: "error",
+    //     });
+    // } catch (error) {
+    //   console.log(error);
+    // }
   });
 
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
@@ -169,10 +184,11 @@ console.log(players[user._id]);
     );
     console.log(result);
     if (result != 0 || result != undefined) {
-      if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
-        console.log("sandip Shiroya");
-        playCasino(gameName, position, result);
-      } else if (gameName == "spinToWin")
+      // if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
+      //   console.log("sandip Shiroya");
+      //   playCasino(gameName, position, result);
+      // } else
+       if (gameName == "spinToWin"||gameName == "stockskill")
         playSpinToWin(gameName, position, result);
       console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
 
@@ -324,14 +340,17 @@ console.log(players[user._id]);
 setInterval(async () => {
   // if (new Date().getHours() > 7 && new Date().getHours() < 22) {
 
-  if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 53) {
-    getResult("rouletteTimer40", 36);
-  }
-  if (new Date().getTime() / 1000 > games.spinToWin.startTime + 60) {
-    getResult("spinToWin", 9);
-  }
-  if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
-    getResult("rouletteTimer60", 36);
+  // if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 53) {
+  //   getResult("rouletteTimer40", 36);
+  // }
+  // if (new Date().getTime() / 1000 > games.spinToWin.startTime + 60) {
+  //   getResult("spinToWin", 9);
+  // }
+  // if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
+  //   getResult("rouletteTimer60", 36);
+  // }
+  if (new Date().getTime() / 1000 > games.stockskill.startTime + 73) {
+    getResult("stockskill", 100);
   }
 
   //Get Admin Percentage
@@ -352,15 +371,15 @@ setInterval(async () => {
   }
   if (new Date().getMinutes() % 10 == 0 && new Date().getSeconds() == 1) {
     console.log("call thayu");
-    let hotAndCold = await getHotCold("rouletteTimer40");
-    games.rouletteTimer40.hot = hotAndCold.hot;
-    games.rouletteTimer40.cold = hotAndCold.cold;
-    hotAndCold = await getHotCold("rouletteTimer60");
-    games.rouletteTimer60.hot = hotAndCold.hot;
-    games.rouletteTimer60.cold = hotAndCold.cold;
-    hotAndCold = await getHotCold("spinToWin");
-    games.spinToWin.hot = hotAndCold.hot;
-    games.spinToWin.cold = hotAndCold.cold;
+    // let hotAndCold = await getHotCold("rouletteTimer40");
+    // games.rouletteTimer40.hot = hotAndCold.hot;
+    // games.rouletteTimer40.cold = hotAndCold.cold;
+    // hotAndCold = await getHotCold("rouletteTimer60");
+    // games.rouletteTimer60.hot = hotAndCold.hot;
+    // games.rouletteTimer60.cold = hotAndCold.cold;
+    // hotAndCold = await getHotCold("spinToWin");
+    // games.spinToWin.hot = hotAndCold.hot;
+    // games.spinToWin.cold = hotAndCold.cold;
   }
   //}
 }, 1000);

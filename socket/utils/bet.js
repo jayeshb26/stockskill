@@ -1,6 +1,7 @@
 const User = require("../../models/User");
 const Bet = require("../../models/Bet");
 const WinResult = require("../../models/WinResult");
+const Stock = require("../../models/Stocks");
 const Winning = require("../../models/Winning");
 const _ = require("lodash");
 async function placeBet(playerId, game, position, betPoint) {
@@ -147,6 +148,61 @@ async function getLastrecord(gameName, playerId) {
   }
 }
 
+async function getStockrecord() {
+  console.log("getdata stock");
+  let result;
+  try {
+    let data = [];
+    const stocks = await Stock.find({});
+    console.log(stocks);
+    for (let res of stocks) {
+      data.push(  {
+        "number":res.number,
+        "name":res.name,
+        "symbol":res.symbol,
+        "market":res.market,
+    
+    });
+     // x.push(res.x);
+    }
+    return { records: data };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+   // mongoose.connection.close();
+  }
+//   try {
+//   //  if (gameName != "roulette")
+//     //   result = await Stock.find({ status: 1 })
+//     //     .select({ result: 1, x: 1, _id: 0 })
+//     //     .sort("-number")
+//     //     .limit(100);
+//     // let data = [];
+//     // let x = [];
+
+//     // console.log(result);
+//     //   for (let res of result) {
+//     //     data.push(res.result);
+//     //     x.push(res.x);
+//     //   }
+
+//     // if (gameName == "rouletteMini")
+//     //   return { records: data, take: 0 }
+//     // else
+//    // const stocks = await Stock.find({});
+//    console.log(Stock);
+//    result = await Stock.find({ });
+//     //    .select({ result: 1, x: 1, _id: 0 })
+//          //.sort("-number")
+//          //.limit(100);
+// //const stocks = await cursor.toArray();
+//     console.log(result);
+//     return { records: result};
+//   } catch (err) {
+//     //console.log("Error on getstockrecord", err.message);
+//    // return err.message;
+//   }
+}
 //Get Admin Percentage for winning Result
 async function getAdminPer() {
   return await Winning.findById("602e55e9a494988def7acc25");
@@ -201,6 +257,7 @@ module.exports = {
   getAdminPer,
   addGameResult,
   getLastrecord,
+  getStockrecord,
   getCurrentBetData,
   getHotCold,
 };
