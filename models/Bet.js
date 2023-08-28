@@ -15,7 +15,7 @@ const BetSchema = new mongoose.Schema(
     },
     bet: Number,
     winPosition: {
-      type: String,
+      type: Object,
       default: "",
     },
     startPoint: Number,

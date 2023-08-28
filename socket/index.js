@@ -8,26 +8,14 @@ const {
   getLastrecord,
   getStockrecord,
   getCurrentBetData,
+  getRandomStock,
   getHotCold,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
 var moment = require('moment')
 let games = {
-  // rouletteTimer40: {
-  //   startTime: new Date().getTime() / 1000,
-  //   position: {},
-  //   adminBalance: 0,
-  //   hot: [],
-  //   cold: [],
-  // },
-  // rouletteTimer60: {
-  //   startTime: new Date().getTime() / 1000,
-  //   position: {},
-  //   adminBalance: 0,
-  //   hot: [],
-  //   cold: [],
-  // },
+  
   stockskill: {
     startTime: new Date().getTime() / 1000,
     position: {},
@@ -35,20 +23,10 @@ let games = {
     hot: [],
     cold: [],
   },
-  // roulette: { adminBalance: 0 },
-  // spinToWin: {
-  //   startTime: new Date().getTime() / 1000,
-  //   position: {},
-  //   adminBalance: 0,
-  //   hot: [],
-  //   cold: [],
-  // },
-  // manualSpin: { adminBalance: 0 },
+  
 };
-console.log( games["stockskill"].startTime);
-//ouletteTimer40 = new Date().getTime() / 1000;
+console.log("game start time :", games["stockskill"].startTime);
 
-//console.log( rouletteTimer40);
 let isManual = false;
 let listArray = [];
 //users: use for store game Name so when user leave room than we can used
@@ -66,7 +44,7 @@ let winningPercent = {
   stockskill: 90,
 };
 io.on("connection", (socket) => {
-  console.info(`Client gone [id=${socket.id}]`);
+  console.info(`Client connected [id=${socket.id}]`);
   socket.emit("res", socket.id
   );
 
@@ -87,7 +65,7 @@ console.log(user._id);
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
     let user = await getUserInfoBytoken(token);
-    console.log("user is ");
+    console.log("user join is ");
     console.log(user);
     users[socket.id] = gameName;
 
@@ -102,17 +80,7 @@ console.log(user._id);
     console.log("Join call Game name is ", gameName);
     let numbers = await getLastrecord(gameName, user._id);
     let stock = await getStockrecord(gameName, user._id);
-    if (gameName == "roulette") {
-      console.log("send join data");
-      return socket.emit("res", {
-        data: {
-          creditPoint: user.creditPoint,
-          gameName,
-        },
-        en: "join",
-        status: 1,
-      });
-    }
+   
     let gameData = await getCurrentBetData(gameName, user._id);
     socket.join(gameName);
     socket.emit("res", {
@@ -133,48 +101,13 @@ console.log(user._id);
     });
   });
 
-  socket.on("joinAdmin", async ({ adminId }) => {
-    try {
-      let user = await getUserInfo(adminId);
-      if (user.role == "Admin") {
-        socket.join("adminData");
-        socket.emit("resAdmin", {
-          data: games,
-        });
-      } else
-        socket.emit("res", {
-          data: "You are not authorised to access this information",
-          en: "error",
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  socket.on("changeAdminBalance", async ({ adminId, data }) => {
-    // try {
-    //   console.log(adminId, data);
-    //   let user = await getUserInfo(adminId);
-    //   console.log(user);
-    //   if (user.role == "Admin") {
-    //     games.rouletteTimer40.adminBalance = data.rouletteTimer40;
-    //     games.rouletteTimer60.adminBalance = data.rouletteTimer60;
-    //     console.log("data change", adminBalance);
-    //     socket.emit("resAdmin", {
-    //       data: games,
-    //     });
-    //   } else
-    //     socket.emit("res", {
-    //       data: "You are not authorised to access this information",
-    //       en: "error",
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  });
-
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
+
     const result = await placeBet(playerId, gameName, position, betPoint);
+    const placeBetuser = await getUserInfo(playerId);
+
+ const re= await getRandomStock();
+ console.log(re);
     console.log(
       playerId,
       gameName,
@@ -183,32 +116,13 @@ console.log(user._id);
       " Bet Point :  ",
       betPoint
     );
-    console.log("result::",result);
-    if (result != 0 || result != undefined) {
-      // if (gameName == "rouletteTimer40" || gameName == "rouletteTimer60") {
-      //   console.log("sandip Shiroya");
-      //   playCasino(gameName, position, result);
-      // } else
-       if (gameName == "spinToWin"||gameName == "stockskill")
-        playSpinToWin(gameName, position, result);
-      console.log("Viju vinod Chopda before : ", games[gameName].adminBalance);
-
-      if (betPoint)
-        games[gameName].adminBalance +=
-          (betPoint * winningPercent[gameName]) / 100;
-
-      console.log(
-        "Viju vinod Chopda Admin balance is: ",
-        games[gameName].adminBalance
-      );
-    }
-
-    socket.to("adminData").emit("resAdmin", {
-      data: games,
-    });
+    //console.log("result::",result);
+   
     socket.emit("res", {
       data: {
         handId: result,
+        creditPoint: placeBetuser.creditPoint,
+        user: placeBetuser,
         gameName,
         result:
           result == 0
@@ -218,6 +132,8 @@ console.log(user._id);
       en: "placeBet",
       status: 1,
     });
+   
+   
   });
 
   socket.on("leaveRoom", ({ gameName, userId }) => {
@@ -225,98 +141,6 @@ console.log(user._id);
     delete users[socket.id];
 
     delete players[userId];
-  });
-
-  socket.on("placeBetRoulette", async ({ playerId, position, betPoint }) => {
-    const transId = await placeBet(playerId, "roulette", position, betPoint);
-    console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
-    let numMultiply = 36;
-    if (transId != 0) {
-      if (betPoint)
-        games.roulette.adminBalance +=
-          (betPoint * winningPercent.roulette) / 100;
-      let game = { position: {} };
-      for (const pos of position) {
-        for (const num of pos[Object.keys(pos)[0]]) {
-          numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
-          let wonAmount =
-            (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
-          game.position = immutable.update(game.position, [num], (v) =>
-            v ? v + wonAmount : wonAmount
-          );
-        }
-      }
-      let result = getResultRoulette(game.position);
-      console.log("Result is ", result);
-      let winAmount = 0;
-      if (game.position[result]) winAmount = game.position[result];
-      await winGamePay(winAmount, transId, result);
-      socket.emit("res", {
-        data: {
-          handId: transId,
-          gameName: "roulette",
-          data: result,
-          winAmount,
-        },
-        en: "result",
-        status: 1,
-      });
-
-      console.log(
-        "Roullete Royal Admin balance is: ",
-        games.roulette.adminBalance,
-        "& result is : ",
-        result
-      );
-    }
-    if (!isManual && listArray.length != 0)
-      winningPercent.roulette =
-        listArray[Math.floor(Math.random() * listArray.length)];
-  });
-
-  socket.on("placeBetManualSpin", async ({ playerId, position, betPoint }) => {
-    const transId = await placeBet(playerId, "roulette", position, betPoint);
-    console.log("roulette", "  :  ", position, " Bet Point :  ", betPoint);
-
-    if (transId != 0) {
-      if (betPoint)
-        games.roulette.adminBalance +=
-          (betPoint * winningPercent.roulette) / 100;
-      let game = { position: {} };
-      for (const pos of position) {
-        for (const num of pos[Object.keys(pos)[0]]) {
-          let wonAmount = (pos.amount * 9) / pos[Object.keys(pos)[0]].length;
-          game.position = immutable.update(game.position, [num], (v) =>
-            v ? v + wonAmount : wonAmount
-          );
-        }
-      }
-      let result = getResultManualSpin(game.position);
-      console.log("Result is ", result);
-      let winAmount = 0;
-      if (game.position[result]) winAmount = game.position[result];
-      await winGamePay(winAmount, transId, result);
-      socket.emit("res", {
-        data: {
-          handId: transId,
-          gameName: "manualSpin",
-          data: result,
-          winAmount,
-        },
-        en: "result",
-        status: 1,
-      });
-
-      console.log(
-        "Roullete Royal Admin balance is: ",
-        games.roulette.adminBalance,
-        "& result is : ",
-        result
-      );
-    }
-    if (!isManual && listArray.length != 0)
-      winningPercent.roulette =
-        listArray[Math.floor(Math.random() * listArray.length)];
   });
 
   //Disconnect the users
@@ -357,164 +181,29 @@ setInterval(async () => {
   //}
 }, 1000);
 
-getResultRoulette = (position) => {
-  let result = "";
-  let resultArray = [];
-  let sortResult = sortObject(position);
-  let lowestResult = "";
-  console.log("Roulette Royal SortResult is", sortResult);
-
-  for (const num of sortResult) {
-    let value = Object.values(num)[0];
-    let key = Object.keys(num)[0];
-    console.log("value : ", value, " key : ", key);
-    if (value < games.roulette.adminBalance) {
-      if (position[result] != position[key]) resultArray = [];
-      resultArray.push(key);
-      result = resultArray[Math.floor(Math.random() * resultArray.length)];
-      lowestResult = result;
-    }
-    if (value > games.roulette.adminBalance) {
-      break;
-    }
-  }
-  console.log("Roullete royal Result is :", result, "num : ", position[result]);
-  if (result == "") result = Math.round(Math.random() * 36);
-  let counter = 0;
-  if (position[result]) {
-    console.log("Akhir mei andar aaya", position[result]);
-    while (games.roulette.adminBalance < position[result]) {
-      console.log("pasand nahi aaya", result);
-      result = Math.round(Math.random() * 36);
-      counter++;
-      if (counter == 100) {
-        if (lowestResult != "") result = lowestResult;
-        else result = Math.round(Math.random() * 36);
-        break;
-      }
-    }
-  }
-  //await addGameResult("roulette", result);
-  if (position[result]) games.roulette.adminBalance -= position[result];
-  return result;
-};
-
-getResultManualSpin = (position) => {
-  let result = "";
-  let resultArray = [];
-  let sortResult = sortObject(position);
-  let lowestResult = "";
-  console.log("Roulette Royal SortResult is", sortResult);
-
-  for (const num of sortResult) {
-    let value = Object.values(num)[0];
-    let key = Object.keys(num)[0];
-    console.log("value : ", value, " key : ", key);
-    if (value < games.roulette.adminBalance) {
-      if (position[result] != position[key]) resultArray = [];
-      resultArray.push(key);
-      result = resultArray[Math.floor(Math.random() * resultArray.length)];
-      lowestResult = result;
-    }
-    if (value > games.roulette.adminBalance) {
-      break;
-    }
-  }
-  console.log("Roullete royal Result is :", result, "num : ", position[result]);
-  if (result == "") result = Math.round(Math.random() * 9);
-  let counter = 0;
-  if (position[result]) {
-    console.log("Akhir mei andar aaya", position[result]);
-    while (games.roulette.adminBalance < position[result]) {
-      console.log("pasand nahi aaya", result);
-      result = Math.round(Math.random() * 9);
-      counter++;
-      if (counter == 100) {
-        if (lowestResult != "") result = lowestResult;
-        else result = Math.round(Math.random() * 9);
-        break;
-      }
-    }
-  }
-  //await addGameResult("roulette", result);
-  if (position[result]) games.roulette.adminBalance -= position[result];
-  return result;
-};
-
 getResult = async (gameName, stopNum) => {
-  let result = "";
-  let resultArray = [];
-  let sortResult = "";
-  let lowestResult = "";
-  let x = 1;
+  console.log("game result call t:")
   games[gameName].startTime = new Date().getTime() / 1000;
 
-  if (Object.keys(games[gameName].position).length != undefined) {
-    sortResult = sortObject(games[gameName].position);
-
-    for (const num of sortResult) {
-      let value = Object.values(num)[0];
-      let key = Object.keys(num)[0];
-      if (value < games[gameName].adminBalance) {
-        if (games[gameName].position[result] != games[gameName].position[key]) {
-          resultArray = [];
-        }
-        resultArray.push(key);
-        result = resultArray[Math.floor(Math.random() * resultArray.length)];
-        lowestResult = result;
-      }
-      if (value > games[gameName].adminBalance) {
-        break;
-      }
-    }
-  }
-
-  if (result == "") {
-    result = Math.round(Math.random() * stopNum);
-  }
-
-  let counter = 0;
-  if (games[gameName].position[result])
-    while (games[gameName].adminBalance < games[gameName].position[result]) {
-      result = Math.round(Math.random() * stopNum);
-      counter++;
-
-      if (counter == 100) {
-        //aaya Error mali ti
-        if (lowestResult != "") result = lowestResult;
-        else result = Math.round(Math.random() * stopNum);
-        break;
-      }
-    }
-  //change thayu last ma aa
-  x = Math.floor(Math.random() * 4) + 1;
-
-  if (gameName == "spinToWin") {
-    if (games[gameName].adminBalance > games[gameName].position[result] * x) {
-      for (const transId in transactions[gameName][result]) {
-        transactions[gameName][result][transId] =
-          transactions[gameName][result][transId] * x;
-      }
-    } else x = 1;
-  }
-
+ const re= await getRandomStock();
   io.in(gameName).emit("res", {
     data: {
       gameName,
-      data: result,
-      x,
+      data:re,
+     
     },
     en: "result",
     status: 1,
   });
+  const x=4;
 
-  if (games[gameName].position[result])
-    games[gameName].adminBalance -= games[gameName].position[result];
+  // if (games[gameName].position[result])
+  //   games[gameName].adminBalance -= games[gameName].position[result];
 
-  await addGameResult(gameName, result, x, winningPercent[gameName]);
+  await addGameResult(gameName, re, x, winningPercent[gameName]);
 
   // Pay Out of the winners
-  await payTransaction(gameName, result);
+ // await payTransaction(gameName, result);
   flushAll(gameName);
 };
 
@@ -577,40 +266,30 @@ flushAll = (gameName) => {
   }
 };
 
-playCasino = (gameName, position, result) => {
-  let numMultiply = 36;
-  for (const pos of position) {
-    for (const num of pos[Object.keys(pos)[0]]) {
-      numMultiply = pos[Object.keys(pos)[0]].length > 6 ? 36 : 35;
+ playSpinToWin = (gameName, position, result) => {
+  
+  try {
+  //  console.log(position);
+    const parsedData =position; //JSON.parse(position);
 
-      let wonAmount =
-        (pos.amount * numMultiply) / pos[Object.keys(pos)[0]].length;
+    parsedData.forEach(position => {
+      const posNumber = position.number;
+     // console.log("posNumber", posNumber);
+      const posPrice = parseFloat(position.price);
+
       games[gameName].position = immutable.update(
         games[gameName].position,
-        [num],
-        (v) => (v ? v + wonAmount : wonAmount)
+        [posNumber],
+        v => (v ? v + posPrice * 100 : posPrice * 100)
       );
+
       transactions[gameName] = immutable.update(
         transactions[gameName],
-        [num, result],
-        (v) => (v ? v + wonAmount : wonAmount)
+        [posNumber, result],
+        v => (v ? v + posPrice * 100 : posPrice * 100)
       );
-    }
+    });
+  } catch (error) {
+    console.error('Error parsing JSON data:', error);
   }
-  console.log("This is data", games);
-  console.log("This is the Dtata: ", games[gameName].position);
-};
-playSpinToWin = (gameName, position, result) => {
-  for (const pos in position) {
-    games[gameName].position = immutable.update(
-      games[gameName].position,
-      [pos],
-      (v) => (v ? v + position[pos] * 100 : position[pos] * 100)
-    );
-    transactions[gameName] = immutable.update(
-      transactions[gameName],
-      [pos, result],
-      (v) => (v ? v + position[pos] * 100 : position[pos] * 100)
-    );
-  }
-};
+ };

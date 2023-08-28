@@ -68,10 +68,11 @@ async function placeBet(playerId, game, position, betPoint) {
           commissionPoint: (betPoint * agent.commissionPercentage) / 100,
         },
       });
+     //  console.log("place bet inserted:",bet._id);
       return bet._id;
     }
     return 0;
-  } catch (err) {
+  } catch (err) {   
     console.log("Error on place bet", err.message);
     return;
   }
@@ -118,6 +119,22 @@ async function addGameResult(gameName, result, x, winningPercent) {
     return err.message;
   }
 }
+async function getRandomStock() {
+  try {
+    const randomStock = await Stock.aggregate([{ $sample: { size: 1 } }]);
+    if (randomStock.length > 0) {
+     // console.log(randomStock[0]);
+      return randomStock[0]; // This will be the randomly selected stock document
+    } else {
+      console.log("No stocks found.");
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    // Close mongoose connection if needed
+    // mongoose.connection.close();
+  }
+}
 
 //Add result of the Game
 async function getLastrecord(gameName, playerId) {
@@ -154,7 +171,7 @@ async function getStockrecord() {
   try {
     let data = [];
     const stocks = await Stock.find({});
-    console.log(stocks);
+   // console.log(stocks);
     for (let res of stocks) {
       data.push(  {
         "number":res.number,
@@ -260,4 +277,5 @@ module.exports = {
   getStockrecord,
   getCurrentBetData,
   getHotCold,
+  getRandomStock,
 };

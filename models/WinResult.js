@@ -7,7 +7,10 @@ const WinResultSchema = new mongoose.Schema(
       type: String,
       default: "Game Name is required",
     },
-    result: String,
+    result: {
+      type: Object,
+      required: true,
+    },
 
     x: {
       type: Number,
