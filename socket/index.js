@@ -25,8 +25,8 @@ let games = {
   },
   
 };
-console.log("game start time :", games["stockskill"].startTime);
-
+console.log("game start time -------------->:", games["stockskill"].startTime);
+console.log("===="+moment().format('YYYY-MM-DD hh:mm:ss'));
 let isManual = false;
 let listArray = [];
 //users: use for store game Name so when user leave room than we can used
@@ -64,7 +64,23 @@ console.log(user._id);
 
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
+
+
     let user = await getUserInfoBytoken(token);
+    
+    
+    
+        if (players[user._id])
+          if (players[user._id] != socket.id) {
+            io.to(players[user._id]).emit("res", {
+              data: "Some one use your Id to other device",
+              en: "logout",
+              status: 4,
+            });
+          }
+        players[user._id] = socket.id;
+    
+    
     console.log("user join is ");
     console.log(user);
     users[socket.id] = gameName;
@@ -73,7 +89,7 @@ console.log(user._id);
       io.to(players[user._id]).emit("res", {
         data: "Your Account is blocked please contact Admin",
         en: "logout",
-        status: 1,
+        status: 4,
       });
     }
 
@@ -92,6 +108,7 @@ console.log(user._id);
         numbers: numbers.records,
         stock: stock.records,
         x: numbers.x,
+        status:1,
         
         gameName,
         gameData,
@@ -163,6 +180,8 @@ console.log(user._id);
 });
 
 setInterval(async () => {
+  //console.log("==interwal=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+  
   // if (new Date().getHours() > 7 && new Date().getHours() < 22) {
 
   // if (new Date().getTime() / 1000 > games.rouletteTimer40.startTime + 53) {
@@ -174,14 +193,35 @@ setInterval(async () => {
   // if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
   //   getResult("rouletteTimer60", 36);
   // }
+  if (new Date().getTime() / 1000 == games.stockskill.startTime + 1) {
+    console.log("==start=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+    console.log("==startgametime=="+games.stockskill.startTime);
+    io.in("stockskill").emit("res", {
+      
+      en: "game start",
+      status: 1,
+    });
+  }
   if (new Date().getTime() / 1000 > games.stockskill.startTime + 73) {
+    console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+    console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
+  }
+  if (new Date().getTime() / 1000 == games.stockskill.startTime + 60) {
+    console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+    console.log("==betclsode=="+games.stockskill.startTime);
+    io.in("stockskill").emit("res", {
+     
+      en: "bet closed",
+      status: 2,
+    });
   }
 
   //}
 }, 1000);
 
 getResult = async (gameName, stopNum) => {
+  
   console.log("game result call t:")
   games[gameName].startTime = new Date().getTime() / 1000;
 
@@ -193,7 +233,7 @@ getResult = async (gameName, stopNum) => {
      
     },
     en: "result",
-    status: 1,
+    status: 3,
   });
   const x=4;
 
