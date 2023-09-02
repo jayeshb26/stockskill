@@ -62,6 +62,33 @@ console.log(user._id);
     players[user._id] = socket.id;
   });
 
+  socket.on("getnew", async ({ token }) => {
+    gameName="stockskill";
+    let user = await getUserInfoBytoken(token);
+    let numbers = await getLastrecord(gameName, user._id);
+    let stock = await getStockrecord(gameName, user._id);
+    socket.emit("res", {
+      data: {
+        creditPoint: user.creditPoint,
+        user: user,
+        date:moment().format('YYYY-MM-DD hh:mm:ss'),
+       
+        time: new Date().getTime() / 1000 - games[gameName].startTime,
+        starttime: games[gameName].startTime,
+        resulttime:games[gameName].startTime+70,
+        betclose:games[gameName].startTime+56,
+        lastresults: numbers.records,
+        stock: stock.records,
+        x: numbers.x,
+        status:1,
+        
+        gameName,
+        
+      },
+      en: "join",
+      status: 1,
+    });
+  });
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
 
@@ -99,13 +126,20 @@ console.log(user._id);
    
     let gameData = await getCurrentBetData(gameName, user._id);
     socket.join(gameName);
+    //var resulttime = new Date((ames[gameName].startTime+70) * 1000);
+   // var closetime = new Date((ames[gameName].startTime+56) * 1000);
+   
     socket.emit("res", {
       data: {
         creditPoint: user.creditPoint,
         user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
+       
         time: new Date().getTime() / 1000 - games[gameName].startTime,
-        numbers: numbers.records,
+        starttime: games[gameName].startTime,
+        resulttime:games[gameName].startTime+70,
+        betclose:games[gameName].startTime+56,
+        alstresult: numbers.records,
         stock: stock.records,
         x: numbers.x,
         status:1,
@@ -193,23 +227,25 @@ setInterval(async () => {
   // if (new Date().getTime() / 1000 > games.rouletteTimer60.startTime + 73) {
   //   getResult("rouletteTimer60", 36);
   // }
+  const currentTimeInSeconds = new Date().getTime() / 1000;
+  const startTime = games.stockskill.startTime;
   if (new Date().getTime() / 1000 == games.stockskill.startTime + 1) {
-    console.log("==start=="+moment().format('YYYY-MM-DD hh:mm:ss'));
-    console.log("==startgametime=="+games.stockskill.startTime);
+    //console.log("==start=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+   // console.log("==startgametime=="+games.stockskill.startTime);
     io.in("stockskill").emit("res", {
       
       en: "game start",
       status: 1,
     });
   }
-  if (new Date().getTime() / 1000 > games.stockskill.startTime + 73) {
-    console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
-    console.log("==gametime=="+games.stockskill.startTime);
+  if (currentTimeInSeconds >= startTime + 70 && currentTimeInSeconds <= startTime + 71) {
+   // console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+    //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
   }
-  if (new Date().getTime() / 1000 == games.stockskill.startTime + 60) {
-    console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
-    console.log("==betclsode=="+games.stockskill.startTime);
+  if (currentTimeInSeconds >= startTime + 56 && currentTimeInSeconds <= startTime + 57) {
+   // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+   // console.log("==betclsode=="+games.stockskill.startTime);
     io.in("stockskill").emit("res", {
      
       en: "bet closed",
