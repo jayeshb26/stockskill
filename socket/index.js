@@ -75,12 +75,17 @@ console.log(user._id);
        
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         starttime: games[gameName].startTime,
-        resulttime:games[gameName].startTime+70,
-        betclose:games[gameName].startTime+56,
+        resulttime:games[gameName].startTime+420,
+        betclose:games[gameName].startTime+300,
         lastresults: numbers.records,
         stock: stock.records,
         x: numbers.x,
         status:1,
+         gstin:"ABCDxyzasfdsa",
+        button1:"https://www.google.co.in/?gws_rd=ssl",
+        button2:"https://www.google.co.in/?gws_rd=ssl",
+        button3:"https://www.google.co.in/?gws_rd=ssl",
+        notice:"welcome to Stock Skill , Have a nice day, Thank you",
         
         gameName,
         
@@ -92,10 +97,10 @@ console.log(user._id);
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
 
-
+console.log("join call");
     let user = await getUserInfoBytoken(token);
     
-    
+    console.log("join call3");
     
         if (players[user._id])
           if (players[user._id] != socket.id) {
@@ -107,7 +112,7 @@ console.log(user._id);
           }
         players[user._id] = socket.id;
     
-    
+    console.log("join call2");
     console.log("user join is ");
     console.log(user);
     users[socket.id] = gameName;
@@ -137,12 +142,17 @@ console.log(user._id);
        
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         starttime: games[gameName].startTime,
-        resulttime:games[gameName].startTime+70,
-        betclose:games[gameName].startTime+56,
+        resulttime:games[gameName].startTime+420,
+        betclose:games[gameName].startTime+300,
         alstresult: numbers.records,
         stock: stock.records,
         x: numbers.x,
         status:1,
+        gstin:"ABCDxyzasfdsa",
+        button1:"https://www.google.co.in/?gws_rd=ssl",
+        button2:"https://www.google.co.in/?gws_rd=ssl",
+        button3:"https://www.google.co.in/?gws_rd=ssl",
+        notice:"welcome to Stock Skill , Have a nice day, Thank you",
         
         gameName,
         gameData,
@@ -158,15 +168,7 @@ console.log(user._id);
     const placeBetuser = await getUserInfo(playerId);
 
  const re= await getRandomStock();
- console.log(re);
-    console.log(
-      playerId,
-      gameName,
-      "  :  ",
-      position,
-      " Bet Point :  ",
-      betPoint
-    );
+
     //console.log("result::",result);
    
     socket.emit("res", {
@@ -179,6 +181,30 @@ console.log(user._id);
           result == 0
             ? "You don't have sufficient Balance or Error on Place bet"
             : "Place Bet Success",
+      },
+      en: "placeBet",
+      status: 1,
+    });
+   
+   
+  });
+
+  socket.on("reward", async ({ playerId,orderId }) => {
+
+   // const result = await placeBet(playerId, gameName, position, betPoint);
+    const placeBetuser = await getUserInfo(playerId);
+
+ const re= await getRandomStock();
+
+    //console.log("result::",result);
+   
+    socket.emit("res", {
+      data: {
+       // handId: result,
+        creditPoint: placeBetuser.creditPoint,
+        user: placeBetuser,
+        
+       result:"Success"
       },
       en: "placeBet",
       status: 1,
@@ -229,21 +255,22 @@ setInterval(async () => {
   // }
   const currentTimeInSeconds = new Date().getTime() / 1000;
   const startTime = games.stockskill.startTime;
-  if (new Date().getTime() / 1000 == games.stockskill.startTime + 1) {
+  if (currentTimeInSeconds == games.stockskill.startTime + 1) {
     //console.log("==start=="+moment().format('YYYY-MM-DD hh:mm:ss'));
    // console.log("==startgametime=="+games.stockskill.startTime);
-    io.in("stockskill").emit("res", {
+   
+   io.in("stockskill").emit("res", {
       
       en: "game start",
       status: 1,
     });
   }
-  if (currentTimeInSeconds >= startTime + 70 && currentTimeInSeconds <= startTime + 71) {
-   // console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+  if (currentTimeInSeconds >= startTime + 420 && currentTimeInSeconds <= startTime + 421) {
+    console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
     //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
   }
-  if (currentTimeInSeconds >= startTime + 56 && currentTimeInSeconds <= startTime + 57) {
+  if (currentTimeInSeconds >= startTime + 300 && currentTimeInSeconds <= startTime + 301) {
    // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
    // console.log("==betclsode=="+games.stockskill.startTime);
     io.in("stockskill").emit("res", {
@@ -258,7 +285,7 @@ setInterval(async () => {
 
 getResult = async (gameName, stopNum) => {
   
-  console.log("game result call t:")
+  console.log("game result call t:");
   games[gameName].startTime = new Date().getTime() / 1000;
 
  const re= await getRandomStock();
