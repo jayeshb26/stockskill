@@ -133,17 +133,18 @@ console.log("join call");
     socket.join(gameName);
     //var resulttime = new Date((ames[gameName].startTime+70) * 1000);
    // var closetime = new Date((ames[gameName].startTime+56) * 1000);
-   
+   let time=new Date().getTime() / 1000 - games[gameName].startTime;
     socket.emit("res", {
       data: {
         creditPoint: user.creditPoint,
         user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
-       
+     
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         starttime: games[gameName].startTime,
         resulttime:games[gameName].startTime+420,
-        betclose:games[gameName].startTime+300,
+        resulttimer:420-time,
+        betclose:300-time,
         alstresult: numbers.records,
         stock: stock.records,
         x: numbers.x,
