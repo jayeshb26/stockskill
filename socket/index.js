@@ -133,7 +133,7 @@ console.log("join call");
     socket.join(gameName);
     //var resulttime = new Date((ames[gameName].startTime+70) * 1000);
    // var closetime = new Date((ames[gameName].startTime+56) * 1000);
-   let time=new Date().getTime() / 1000 - games[gameName].startTime;
+  // let time=new Date().getTime() / 1000 - games[gameName].startTime;
     socket.emit("res", {
       data: {
         creditPoint: user.creditPoint,
@@ -143,8 +143,7 @@ console.log("join call");
         time: new Date().getTime() / 1000 - games[gameName].startTime,
         starttime: games[gameName].startTime,
         resulttime:games[gameName].startTime+420,
-        resulttimer:420-time,
-        betclose:300-time,
+        betclose:games[gameName].startTime+300,
         alstresult: numbers.records,
         stock: stock.records,
         x: numbers.x,
@@ -177,10 +176,11 @@ console.log("join call");
         handId: result,
         creditPoint: placeBetuser.creditPoint,
         user: placeBetuser,
+        position:position,
         gameName,
         result:
           result == 0
-            ? "You don't have sufficient Balance or Error on Place bet"
+            ? "You   don't have sufficient Balance or Error on Place bet"
             : "Place Bet Success",
       },
       en: "placeBet",

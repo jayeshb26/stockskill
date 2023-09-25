@@ -21,6 +21,7 @@ const BetSchema = new mongoose.Schema(
     startPoint: Number,
     userName: String,
     name: String,
+    barcode: String,
     position: {
       type: Object,
       required: true,
