@@ -4,7 +4,10 @@ const WinResult = require("../../models/WinResult");
 const Stock = require("../../models/Stocks");
 const Winning = require("../../models/Winning");
 const _ = require("lodash");
-async function placeBet(playerId, game, position, betPoint) {
+
+//import urid from '../../node_modules/urid';
+//var urid = require('../../node_modules/urid');
+async function placeBet(playerId, game, position, betPoint,bar) {
   //Verify Token
   try {
     let player = await User.findById(playerId);
@@ -21,6 +24,7 @@ async function placeBet(playerId, game, position, betPoint) {
     console.log("*******************************************");
     let bet = "";
     if (player.creditPoint >= betPoint) {
+     // let bar=new Date().valueOf();
       bet = await Bet.create({
         playerId,
         game,
@@ -29,6 +33,7 @@ async function placeBet(playerId, game, position, betPoint) {
         userName: player.userName,
         position,
         name: player.name,
+        barcode:bar,
         classicCommission: (betPoint * classic.commissionPercentage) / 100,
         executiveCommission: (betPoint * executive.commissionPercentage) / 100,
         playerCommission: (betPoint * player.commissionPercentage) / 100,

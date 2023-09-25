@@ -13,7 +13,9 @@ const {
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
-var moment = require('moment')
+var moment = require('moment');
+
+
 let games = {
   
   stockskill: {
@@ -163,8 +165,9 @@ console.log("join call");
   });
 
   socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
-
-    const result = await placeBet(playerId, gameName, position, betPoint);
+    let bar=Math.random().toString(36).slice(2);
+    
+    const result = await placeBet(playerId, gameName, position, betPoint,bar);
     const placeBetuser = await getUserInfo(playerId);
 
  const re= await getRandomStock();
@@ -177,6 +180,8 @@ console.log("join call");
         creditPoint: placeBetuser.creditPoint,
         user: placeBetuser,
         position:position,
+        betPoint:betPoint,
+        barcode:bar,
         gameName,
         result:
           result == 0
@@ -190,7 +195,7 @@ console.log("join call");
    
   });
 
-  socket.on("reward", async ({ playerId,orderId }) => {
+  socket.on("reward", async ({ playerId,barcode }) => {
 
    // const result = await placeBet(playerId, gameName, position, betPoint);
     const placeBetuser = await getUserInfo(playerId);
@@ -204,10 +209,10 @@ console.log("join call");
        // handId: result,
         creditPoint: placeBetuser.creditPoint,
         user: placeBetuser,
-        
+        stock:re,
        result:"Success"
       },
-      en: "placeBet",
+      en: "reward",
       status: 1,
     });
    

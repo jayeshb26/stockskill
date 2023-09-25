@@ -38,6 +38,7 @@
     "slugify": "^1.4.4",
     "socket.io": "^2.3.0",
     "uniqid": "^5.2.0",
+    "urid": "^1.1.0",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
