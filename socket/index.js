@@ -241,20 +241,21 @@ console.log("join call");
 
   socket.on("detail", async ({ startdate,enddate,playerId }) => {
 
-    const detail = await getDetails(playerId,startdate,enddate);
-     const placeBetuser = await getUserInfo(playerId);
+ //   const detail = await getDetails(playerId,startdate,enddate);
+   //  const placeBetuser = await getUserInfo(playerId);
 
  
-  const re= await getRandomStock();
+  //const re= await getRandomStock();
  
      //console.log("result::",result);
     
      socket.emit("res", {
        data: {
-         handId: detail,
-         creditPoint: placeBetuser.creditPoint,
-         user: placeBetuser,
-         stock:re,
+         totalorder: 1000,
+         totalsucess:500,
+         totalcommision:100,
+         totalgst:280,
+         
         result:"Success"
        },
        en: "reward",

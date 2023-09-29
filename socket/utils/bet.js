@@ -291,12 +291,13 @@ async function getDetails(startdate,enddate) {
      .sort("-createdAt")
      .limit(50);
    let data = {};
-console.log(res);
-  // for (let element of res) {
-  //   data[element.result] = data[element.result] ? data[element.result] + 1 : 1;
-  // }
+//
+   for (let element of res) {
+     data[element.result] = data[element.result] ? data[element.result] + 1 : 1;
+   }
 
-  // let data2 = sortObject(data);
+   let data2 = sortObject(data);
+   console.log(data2);
   // let cold = [];
   // let hot = [];
   // for (let i = 0; i < 5; i++) {
