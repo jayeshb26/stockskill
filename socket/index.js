@@ -230,6 +230,7 @@ console.log("join call");
         creditPoint: placeBetuser.creditPoint,
         user: placeBetuser,
         stock:re,
+        totalreward:100,
        result:"Success"
       },
       en: "reward",
@@ -255,7 +256,7 @@ console.log("join call");
          totalsucess:500,
          totalcommision:100,
          totalgst:280,
-         
+
         result:"Success"
        },
        en: "reward",
