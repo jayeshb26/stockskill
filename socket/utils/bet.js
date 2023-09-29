@@ -285,7 +285,8 @@ async function getHotCold(gameName) {
 }
 
 async function getDetails(startdate,enddate) {
-   let res = await WinResult.find({ "stockskill" })
+  let gameName = "stockskill";
+   let res = await WinResult.find({ gameName })
      .select({ result: 1, _id: 0 })
      .sort("-createdAt")
      .limit(50);
