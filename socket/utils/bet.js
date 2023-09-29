@@ -170,6 +170,34 @@ async function getLastrecord(gameName, playerId) {
   }
 }
 
+async function getResult1() {
+  console.log(gameName);
+  let result;
+  try {
+    if (gameName != "roulette")
+      result = await WinResult.find({ gameName })
+        .select({ result: 1, x: 1, _id: 0 })
+        .sort("-createdAt")
+        .limit(15);
+    let data = [];
+    let x = [];
+
+    if (gameName != "roulette")
+      for (let res of result) {
+        data.push(res.result);
+        x.push(res.x);
+      }
+
+    // if (gameName == "rouletteMini")
+    //   return { records: data, take: 0 }
+    // else
+    return { records: data, x: x };
+  } catch (err) {
+    console.log("Error on getLastrecord", err.message);
+    return err.message;
+  }
+}
+
 async function getStockrecord() {
   console.log("getdata stock");
   let result;
@@ -256,6 +284,28 @@ async function getHotCold(gameName) {
   return { hot, cold };
 }
 
+async function getDetails(startdate,enddate) {
+   let res = await WinResult.find({ "stockskill" })
+     .select({ result: 1, _id: 0 })
+     .sort("-createdAt")
+     .limit(50);
+   let data = {};
+console.log(res);
+  // for (let element of res) {
+  //   data[element.result] = data[element.result] ? data[element.result] + 1 : 1;
+  // }
+
+  // let data2 = sortObject(data);
+  // let cold = [];
+  // let hot = [];
+  // for (let i = 0; i < 5; i++) {
+  //   cold.push(Object.keys(data2[i])[0]);
+  //   hot.push(Object.keys(data2[data2.length - (i + 1)])[0]);
+  // }
+  // return { hot, cold };
+}
+
+
 sortObject = (entry) => {
   const sortKeysBy = function (obj, comparator) {
     var keys = _.sortBy(_.keys(obj), function (key) {
@@ -282,5 +332,6 @@ module.exports = {
   getStockrecord,
   getCurrentBetData,
   getHotCold,
+  getDetails,
   getRandomStock,
 };

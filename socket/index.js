@@ -6,9 +6,11 @@ const {
   getAdminPer,
   addGameResult,
   getLastrecord,
+  getDetails,
   getStockrecord,
   getCurrentBetData,
   getRandomStock,
+  
   getHotCold,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
@@ -29,6 +31,24 @@ let games = {
 };
 console.log("game start time -------------->:", games["stockskill"].startTime);
 console.log("===="+moment().format('YYYY-MM-DD hh:mm:ss'));
+let currentDate = new Date().toDateString();
+let dailyCount = 1;
+function resetDailyCounter() {
+  const today = new Date().toDateString();
+  if (today !== currentDate) {
+    currentDate = today;
+    dailyCount = 1;
+  }
+}
+
+console.log("8888*************dailyCount: ", dailyCount);
+// Function to increment the daily counter
+function incrementDailyCounter() {
+  console.log("8888************* incrementDailyCounter dailyCount: ", dailyCount);
+  resetDailyCounter();
+  dailyCount++;
+  return dailyCount;
+}
 let isManual = false;
 let listArray = [];
 //users: use for store game Name so when user leave room than we can used
@@ -81,7 +101,7 @@ console.log(user._id);
         betclose:games[gameName].startTime+300,
         lastresults: numbers.records,
         stock: stock.records,
-        x: numbers.x,
+        x: dailyCount,
         status:1,
          gstin:"ABCDxyzasfdsa",
         button1:"https://www.google.co.in/?gws_rd=ssl",
@@ -148,7 +168,7 @@ console.log("join call");
         betclose:games[gameName].startTime+300,
         alstresult: numbers.records,
         stock: stock.records,
-        x: numbers.x,
+        x: dailyCount,
         status:1,
         gstin:"ABCDxyzasfdsa",
         button1:"https://www.google.co.in/?gws_rd=ssl",
@@ -219,6 +239,31 @@ console.log("join call");
    
   });
 
+  socket.on("detail", async ({ startdate,enddate,playerId }) => {
+
+    const detail = await getDetails(playerId,startdate,enddate);
+     const placeBetuser = await getUserInfo(playerId);
+
+ 
+  const re= await getRandomStock();
+ 
+     //console.log("result::",result);
+    
+     socket.emit("res", {
+       data: {
+         handId: detail,
+         creditPoint: placeBetuser.creditPoint,
+         user: placeBetuser,
+         stock:re,
+        result:"Success"
+       },
+       en: "reward",
+       status: 1,
+     });
+    
+    
+   });
+
   socket.on("leaveRoom", ({ gameName, userId }) => {
     socket.leave(gameName);
     delete users[socket.id];
@@ -276,7 +321,7 @@ setInterval(async () => {
     //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
   }
-  if (currentTimeInSeconds >= startTime + 300 && currentTimeInSeconds <= startTime + 301) {
+  if (currentTimeInSeconds >= startTime + 10 && currentTimeInSeconds <= startTime + 11) {
    // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
    // console.log("==betclsode=="+games.stockskill.startTime);
     io.in("stockskill").emit("res", {
@@ -295,22 +340,24 @@ getResult = async (gameName, stopNum) => {
   games[gameName].startTime = new Date().getTime() / 1000;
 
  const re= await getRandomStock();
-  io.in(gameName).emit("res", {
+// const lid= await getResult1();
+
+ io.in(gameName).emit("res", {
     data: {
       gameName,
       data:re,
-     
+      x:dailyCount,
     },
     en: "result",
     status: 3,
   });
-  const x=4;
+   
 
   // if (games[gameName].position[result])
   //   games[gameName].adminBalance -= games[gameName].position[result];
 
-  await addGameResult(gameName, re, x, winningPercent[gameName]);
-
+  await addGameResult(gameName, re, dailyCount, winningPercent[gameName]);
+  incrementDailyCounter();
   // Pay Out of the winners
  // await payTransaction(gameName, result);
   flushAll(gameName);
