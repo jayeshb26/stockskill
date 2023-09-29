@@ -321,7 +321,7 @@ setInterval(async () => {
     //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
   }
-  if (currentTimeInSeconds >= startTime + 10 && currentTimeInSeconds <= startTime + 11) {
+  if (currentTimeInSeconds >= startTime + 300 && currentTimeInSeconds <= startTime + 301) {
    // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
    // console.log("==betclsode=="+games.stockskill.startTime);
     io.in("stockskill").emit("res", {
