@@ -259,7 +259,7 @@ console.log("join call");
 
         result:"Success"
        },
-       en: "reward",
+       en: "detail",
        status: 1,
      });
     
