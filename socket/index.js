@@ -184,7 +184,7 @@ console.log("join call");
     });
   });
 
-  socket.on("placeBet", async ({ playerId, gameName, position, betPoint }) => {
+  socket.on("placeBet", async ({ playerId, gameName, position, betPoint,bucketid }) => {
     let bar=Math.random().toString(36).slice(2);
     
     const result = await placeBet(playerId, gameName, position, betPoint,bar);
@@ -318,7 +318,9 @@ setInterval(async () => {
       status: 1,
     });
   }
-  if (currentTimeInSeconds >= startTime + 420 && currentTimeInSeconds <= startTime + 421) {
+  
+  
+  if (currentTimeInSeconds >= startTime + 410 && currentTimeInSeconds <= startTime + 411) {
     console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
     //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
@@ -343,8 +345,17 @@ getResult = async (gameName, stopNum) => {
 
  const re= await getRandomStock();
 // const lid= await getResult1();
-
- io.in(gameName).emit("res", {
+io.in(gameName).emit("res", {
+  data: {
+    gameName,
+    data:re,
+   
+  },
+  en: "preresult",
+  status: 3,
+});
+setInterval(()=>{
+  io.in(gameName).emit("res", {
     data: {
       gameName,
       data:re,
@@ -353,6 +364,8 @@ getResult = async (gameName, stopNum) => {
     en: "result",
     status: 3,
   });
+ 
+  }, 10000)
    
 
   // if (games[gameName].position[result])
