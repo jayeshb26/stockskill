@@ -7,7 +7,7 @@ const _ = require("lodash");
 
 //import urid from '../../node_modules/urid';
 //var urid = require('../../node_modules/urid');
-async function placeBet(playerId, game, position, betPoint,bar) {
+async function placeBet(playerId, game, position, betPoint,bar,session,buckettype) {
   //Verify Token
   try {
     let player = await User.findById(playerId);
@@ -34,6 +34,9 @@ async function placeBet(playerId, game, position, betPoint,bar) {
         position,
         name: player.name,
         barcode:bar,
+        session:session,
+        bucket:buckettype,
+
         classicCommission: (betPoint * classic.commissionPercentage) / 100,
         executiveCommission: (betPoint * executive.commissionPercentage) / 100,
         playerCommission: (betPoint * player.commissionPercentage) / 100,
@@ -257,6 +260,13 @@ async function getStockrecord() {
 async function getAdminPer() {
   return await Winning.findById("602e55e9a494988def7acc25");
 }
+async function getReprint(playerId,handId) {
+  return await Bet.find( {"$and": [{ playerId: playerId},{_id: handId }]});
+//console.log(reprint);
+}
+async function getCancelBet(playerId,handId,session) {
+  return await Bet.findOneAndUpdate( {_id: handId },{$set:{isdelete:1}});
+}
 //Get current running Game Data{
 async function getCurrentBetData(gameName, playerId) {
   let data = await Bet.find({ game: gameName, winPosition: "", playerId });
@@ -336,4 +346,6 @@ module.exports = {
   getHotCold,
   getDetails,
   getRandomStock,
+  getReprint,
+  getCancelBet,
 };

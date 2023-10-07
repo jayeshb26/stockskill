@@ -7,7 +7,7 @@ const BetSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
+    
     game: {
       type: String,
       enum: ["rouletteTimer40", "rouletteTimer60", "roulette", "spinToWin", "manualSpin","stockskill"], //if you write admin than its display error "`admin` is not a valid enum value for path`role`".
@@ -27,6 +27,18 @@ const BetSchema = new mongoose.Schema(
       required: true,
     },
     won: {
+      type: Number,
+      default: 0,
+    },
+    session: {
+      type: Number,
+      default: 0,
+    },
+    bucket: {
+      type: Number,
+      default: 0,
+    },
+    isdelete:{
       type: Number,
       default: 0,
     },

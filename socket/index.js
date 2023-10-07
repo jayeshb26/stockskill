@@ -10,8 +10,9 @@ const {
   getStockrecord,
   getCurrentBetData,
   getRandomStock,
-  
+  getReprint,
   getHotCold,
+  getCancelBet,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
@@ -190,10 +191,10 @@ console.log("join call");
     });
   });
 
-  socket.on("placeBet", async ({ playerId, gameName, position, betPoint,buckettype,session }) => {
+  socket.on("placeBet", async ({ playerId, gameName, position, betPoint,buckettype }) => {
     let bar=Math.random().toString(36).slice(2);
     
-    const result = await placeBet(playerId, gameName, position, betPoint,bar);
+    const result = await placeBet(playerId, gameName, position, betPoint,bar,dailyCount,buckettype);
     const placeBetuser = await getUserInfo(playerId);
 
  const re= await getRandomStock();
@@ -245,6 +246,74 @@ console.log("join call");
    
    
   });
+  socket.on("getReprint", async ({ token,handId }) => {
+    let user = await getUserInfoBytoken(token);
+    // const result = await placeBet(playerId, gameName, position, betPoint);
+     //const placeBetuser = await getUserInfo(playerId);
+  console.log(user);
+   let reprint= await getReprint(user._id,handId);
+ //console.log(re);
+     console.log("reprint::",reprint[0]);
+    
+     socket.emit("res", {
+       data: {
+        // handId: result,
+        data:reprint[0],
+        result:"Success"
+       },
+       en: "reward",
+       status: 1,
+     });
+    
+    
+   });
+
+   socket.on("getCancelBet", async ({ token,handId,session }) => {
+    let user = await getUserInfoBytoken(token);
+    // const result = await placeBet(playerId, gameName, position, betPoint);
+     //const placeBetuser = await getUserInfo(playerId);
+  //console.log(user[0]);
+
+  if(session==dailyCount){
+   let cancelbet= await getCancelBet(user._id,handId,dailyCount);
+ //console.log(re);
+     //console.log("reprint::",cancelbet[0]);
+    
+     socket.emit("res", {
+      data: {
+        // handId: result,
+        msg:"Order Deleted Suscessfully",
+        result:"Success"
+       },
+       en: "cancelBet",
+       status: 1,
+     });
+     socket.emit("res", {
+      data: {
+        // handId: result,
+        user:user,
+        result:"Success"
+       },
+       en: "balance",
+       status: 1,
+     });
+    
+    
+  
+  }else{
+     
+    socket.emit("res", {
+      data: {
+       // handId: result,
+       msg:"Session Expired",
+       result:"Fail"
+      },
+      en: "cancelBet",
+      status: 1,
+    });
+  }
+
+});
 
   socket.on("detail", async ({ startdate,enddate,playerId }) => {
 
