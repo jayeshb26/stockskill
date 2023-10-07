@@ -104,9 +104,12 @@ console.log(user._id);
         x: dailyCount,
         status:1,
          gstin:"ABCDxyzasfdsa",
-        button1:"https://www.google.co.in/?gws_rd=ssl",
-        button2:"https://www.google.co.in/?gws_rd=ssl",
-        button3:"https://www.google.co.in/?gws_rd=ssl",
+         button1:"https://www.google.co.in/?gws_rd=ssl",
+         button2:"https://www.google.co.in/?gws_rd=ssl",
+         button3:"https://www.google.co.in/?gws_rd=ssl",
+         buttontext1:"Privacy Policy",
+         buttontext2:"Terms & Conditions",
+         buttontext3:"Rules",
         notice:"welcome to Stock Skill , Have a nice day, Thank you",
         
         gameName,
@@ -174,6 +177,9 @@ console.log("join call");
         button1:"https://www.google.co.in/?gws_rd=ssl",
         button2:"https://www.google.co.in/?gws_rd=ssl",
         button3:"https://www.google.co.in/?gws_rd=ssl",
+        buttontext1:"Privacy Policy",
+        buttontext2:"Terms & Conditions",
+        buttontext3:"Rules",
         notice:"welcome to Stock Skill , Have a nice day, Thank you",
         
         gameName,
@@ -184,7 +190,7 @@ console.log("join call");
     });
   });
 
-  socket.on("placeBet", async ({ playerId, gameName, position, betPoint,bucketid }) => {
+  socket.on("placeBet", async ({ playerId, gameName, position, betPoint,buckettype,session }) => {
     let bar=Math.random().toString(36).slice(2);
     
     const result = await placeBet(playerId, gameName, position, betPoint,bar);
@@ -318,9 +324,7 @@ setInterval(async () => {
       status: 1,
     });
   }
-  
-  
-  if (currentTimeInSeconds >= startTime + 410 && currentTimeInSeconds <= startTime + 411) {
+  if (currentTimeInSeconds >= startTime + 420 && currentTimeInSeconds <= startTime + 421) {
     console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
     //console.log("==gametime=="+games.stockskill.startTime);
     getResult("stockskill", 100);
@@ -345,17 +349,8 @@ getResult = async (gameName, stopNum) => {
 
  const re= await getRandomStock();
 // const lid= await getResult1();
-io.in(gameName).emit("res", {
-  data: {
-    gameName,
-    data:re,
-   
-  },
-  en: "preresult",
-  status: 3,
-});
-setInterval(()=>{
-  io.in(gameName).emit("res", {
+
+ io.in(gameName).emit("res", {
     data: {
       gameName,
       data:re,
@@ -364,8 +359,6 @@ setInterval(()=>{
     en: "result",
     status: 3,
   });
- 
-  }, 10000)
    
 
   // if (games[gameName].position[result])
