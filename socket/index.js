@@ -327,10 +327,13 @@ console.log("join call");
     
      socket.emit("res", {
        data: {
-         totalorder: 1000,
-         totalsucess:500,
-         totalcommision:100,
-         totalgst:280,
+         sale: 1000,
+         gst:500,
+         total:100,
+         success:280,
+         tds:100,
+         grandtotal:1500,
+         commision:2000,
 
         result:"Success"
        },
