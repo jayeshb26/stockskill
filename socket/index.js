@@ -209,6 +209,8 @@ console.log("join call");
         position:position,
         betPoint:betPoint,
         barcode:bar,
+        buckettype:buckettype,
+        session:dailyCount,
         gameName,
         result:
           result == 0
