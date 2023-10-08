@@ -261,7 +261,7 @@ console.log("join call");
         data:reprint[0],
         result:"Success"
        },
-       en: "reward",
+       en: "reprint",
        status: 1,
      });
     
