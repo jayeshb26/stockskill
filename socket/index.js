@@ -120,6 +120,7 @@ console.log(user._id);
       status: 1,
     });
   });
+
   //Join Event When Application is Start
   socket.on("join", async ({ token, gameName }) => {
 
@@ -223,6 +224,81 @@ console.log("join call");
    
    
   });
+
+
+  socket.on("getDeposit", async ({ token,playerId }) => {
+
+    // const result = await placeBet(playerId, gameName, position, betPoint);
+    // const placeBetuser = await getUserInfo(playerId);
+ 
+  //const re= await getRandomStock();
+ 
+     //console.log("result::",result);
+    
+     socket.emit("res", {
+       data: {
+        // handId: result,
+         qrcode: "https://support.thinkific.com/hc/article_attachments/360042081334/5d37325ea1ff6.png",
+         message: "Please Scan the QR code to Deposit",
+         upiid:"stockskill@oksbi",
+         withdrawal:"Withdrawal Timeing is 3PM to 6PM",
+        
+        
+       },
+       en: "getDeposit",
+       status: 1,
+     });
+    
+    
+   });
+
+   socket.on("postDeposit", async ({ token,playerId,amount,utrNo}) => {
+
+    // const result = await placeBet(playerId, gameName, position, betPoint);
+    // const placeBetuser = await getUserInfo(playerId);
+ 
+  //const re= await getRandomStock();
+ 
+     //console.log("result::",result);
+    
+     socket.emit("res", {
+       data: {
+        // handId: result,
+         amount: amount,
+         utrno: utrNo,
+         
+        result:"Deposie Request Success"
+       },
+       en: "postDeposit",
+       status: 1,
+     });
+    
+    
+   });
+
+   socket.on("postWithdrawal", async ({ token,playerId,amount}) => {
+
+    // const result = await placeBet(playerId, gameName, position, betPoint);
+    // const placeBetuser = await getUserInfo(playerId);
+ 
+  //const re= await getRandomStock();
+ 
+     //console.log("result::",result);
+    
+     socket.emit("res", {
+       data: {
+        // handId: result,
+         amount: amount,
+        
+         
+        result:"Withdrawal Request Success"
+       },
+       en: "postWithdrawal",
+       status: 1,
+     });
+    
+    
+   });
 
   socket.on("reward", async ({ playerId,barcode }) => {
 
