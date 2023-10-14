@@ -242,6 +242,8 @@ console.log("join call");
          message: "Please Scan the QR code to Deposit",
          upiid:"stockskill@oksbi",
          withdrawal:"Withdrawal Timeing is 3PM to 6PM",
+         isDeposit:true,
+         isWithdrawal:true,
         
         
        },
@@ -276,7 +278,7 @@ console.log("join call");
     
    });
 
-   socket.on("postWithdrawal", async ({ token,playerId,amount}) => {
+   socket.on("postWithdrawal", async ({ token,playerId,amount,comment}) => {
 
     // const result = await placeBet(playerId, gameName, position, betPoint);
     // const placeBetuser = await getUserInfo(playerId);
@@ -289,6 +291,7 @@ console.log("join call");
        data: {
         // handId: result,
          amount: amount,
+         
         
          
         result:"Withdrawal Request Success"
