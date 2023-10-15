@@ -169,9 +169,9 @@ console.log("join call");
       data: {
         market: getActive[0].name,
         gamestate: gamestate,
-        isbreak:false,
+        isbreak:true,
         breakmsg:"Wait for Next MArket open",
-        breaktime:"10:00",
+        breaktime:60,
         creditPoint: user.creditPoint,
         user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
