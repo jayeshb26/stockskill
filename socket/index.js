@@ -165,13 +165,20 @@ console.log("join call");
     //var resulttime = new Date((ames[gameName].startTime+70) * 1000);
    // var closetime = new Date((ames[gameName].startTime+56) * 1000);
   // let time=new Date().getTime() / 1000 - games[gameName].startTime;
+  let isbreak=false;
+  let breaktime=60;
+  if (dailyCount==4){
+     isbreak=true;
+     breaktime=60;
+    
+  }
     socket.emit("res", {
       data: {
         market: getActive[0].name,
         gamestate: gamestate,
-        isbreak:true,
+        isbreak:isbreak,
         breakmsg:"Wait for Next MArket open",
-        breaktime:60,
+        breaktime:breaktime,
         creditPoint: user.creditPoint,
         user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
