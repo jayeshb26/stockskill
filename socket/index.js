@@ -13,6 +13,7 @@ const {
   getReprint,
   getHotCold,
   getCancelBet,
+  getActivemarket,
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
@@ -41,7 +42,7 @@ function resetDailyCounter() {
     dailyCount = 1;
   }
 }
-
+let gamestate = 0;
 console.log("8888*************dailyCount: ", dailyCount);
 // Function to increment the daily counter
 function incrementDailyCounter() {
@@ -155,7 +156,10 @@ console.log("join call");
     console.log("Join call Game name is ", gameName);
     let numbers = await getLastrecord(gameName, user._id);
     let stock = await getStockrecord(gameName, user._id);
+    let getActive= await getActivemarket();
+  //  console.log();
    
+
     let gameData = await getCurrentBetData(gameName, user._id);
     socket.join(gameName);
     //var resulttime = new Date((ames[gameName].startTime+70) * 1000);
@@ -163,6 +167,11 @@ console.log("join call");
   // let time=new Date().getTime() / 1000 - games[gameName].startTime;
     socket.emit("res", {
       data: {
+        market: getActive[0].name,
+        gamestate: gamestate,
+        isbreak:false,
+        breakmsg:"Wait for Next MArket open",
+        breaktime:"10:00",
         creditPoint: user.creditPoint,
         user: user,
         date:moment().format('YYYY-MM-DD hh:mm:ss'),
@@ -450,6 +459,7 @@ console.log("join call");
     });
   });
 });
+let prest={}
 
 setInterval(async () => {
   //console.log("==interwal=="+moment().format('YYYY-MM-DD hh:mm:ss'));
@@ -477,14 +487,28 @@ setInterval(async () => {
       status: 1,
     });
   }
+  const randomOffset = Math.floor(Math.random() * (417 - 401 + 1) + 401);
+
+  if (currentTimeInSeconds >= startTime + randomOffset && currentTimeInSeconds <= startTime + randomOffset+2) {
+    // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
+    // console.log("==betclsode=="+games.stockskill.startTime);
+    prest= await getRandomStock();
+ 
+    gamestate = 1;
+  getResult("stockskill", 100,1);
+    
+   }
   if (currentTimeInSeconds >= startTime + 420 && currentTimeInSeconds <= startTime + 421) {
     console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
     //console.log("==gametime=="+games.stockskill.startTime);
-    getResult("stockskill", 100);
+   gamestate=3;
+    getResult("stockskill", 100,2);
   }
   if (currentTimeInSeconds >= startTime + 300 && currentTimeInSeconds <= startTime + 301) {
    // console.log("==betclose=="+moment().format('YYYY-MM-DD hh:mm:ss'));
    // console.log("==betclsode=="+games.stockskill.startTime);
+ gamestate = 1;
+   
     io.in("stockskill").emit("res", {
      
       en: "bet closed",
@@ -494,19 +518,32 @@ setInterval(async () => {
 
   //}
 }, 1000);
-
-getResult = async (gameName, stopNum) => {
+getResult = async (gameName, stopNum,pre) => {
   
+   if(pre==1)
+  {
+
+
+ io.in(gameName).emit("res", {
+  data: {
+    gameName,
+    data:prest,
+   // x:dailyCount,
+  },
+  en: "preresult",
+  status: 2,
+});
+  }else{
   console.log("game result call t:");
   games[gameName].startTime = new Date().getTime() / 1000;
 
- const re= await getRandomStock();
+
 // const lid= await getResult1();
 
  io.in(gameName).emit("res", {
     data: {
       gameName,
-      data:re,
+      data:prest,
       x:dailyCount,
     },
     en: "result",
@@ -517,11 +554,14 @@ getResult = async (gameName, stopNum) => {
   // if (games[gameName].position[result])
   //   games[gameName].adminBalance -= games[gameName].position[result];
 
-  await addGameResult(gameName, re, dailyCount, winningPercent[gameName]);
+  await addGameResult(gameName, prest, dailyCount, winningPercent[gameName]);
   incrementDailyCounter();
   // Pay Out of the winners
  // await payTransaction(gameName, result);
   flushAll(gameName);
+  
+  gamestate=0;
+}
 };
 
 payTransaction = async (gameName, result) => {
@@ -575,6 +615,7 @@ sortObject = (entry) => {
 };
 
 flushAll = (gameName) => {
+  prest={};
   games[gameName].position = {};
   transactions[gameName] = {};
   if (!isManual && listArray.length != 0) {

@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 const Bet = require("../../models/Bet");
+const Market = require("../../models/Market");
 const WinResult = require("../../models/WinResult");
 const Stock = require("../../models/Stocks");
 const Winning = require("../../models/Winning");
@@ -136,6 +137,19 @@ async function getRandomStock() {
     } else {
       console.log("No stocks found.");
     }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    // Close mongoose connection if needed
+    // mongoose.connection.close();
+  }
+}
+async function getActivemarket() {
+  console.log("getActivemarket");
+  try {
+    const acm = Market.find({ status:"active"});
+    
+    return  acm;
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
@@ -348,4 +362,5 @@ module.exports = {
   getRandomStock,
   getReprint,
   getCancelBet,
+  getActivemarket,
 };
