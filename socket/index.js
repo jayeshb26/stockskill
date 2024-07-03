@@ -14,6 +14,7 @@ const {
   getHotCold,
   getCancelBet,
   getActivemarket,
+  getbetdetail
 } = require("./utils/bet");
 const immutable = require("object-path-immutable");
 var _ = require("lodash");
@@ -105,14 +106,14 @@ console.log(user._id);
         stock: stock.records,
         x: dailyCount,
         status:1,
-         gstin:"ABCDxyzasfdsa",
+         gstin:"27ABMCS7351L1ZN",
          button1:"https://www.google.co.in/?gws_rd=ssl",
          button2:"https://www.google.co.in/?gws_rd=ssl",
          button3:"https://www.google.co.in/?gws_rd=ssl",
          buttontext1:"Privacy Policy",
          buttontext2:"Terms & Conditions",
          buttontext3:"Rules",
-        notice:"welcome to Stock Skill , Have a nice day, Thank you",
+        notice:"Welcome to Stock Skill Fantasy Stock SKill Program  , Have a nice day, Thank you",
         
         gameName,
         
@@ -174,7 +175,7 @@ console.log("join call");
   }
     socket.emit("res", {
       data: {
-        market: getActive[0].name,
+        market: "Bombay Stock Exchange",
         gamestate: gamestate,
         isbreak:isbreak,
         breakmsg:"Wait for Next MArket open",
@@ -191,14 +192,14 @@ console.log("join call");
         stock: stock.records,
         x: dailyCount,
         status:1,
-        gstin:"ABCDxyzasfdsa",
-        button1:"https://www.google.co.in/?gws_rd=ssl",
-        button2:"https://www.google.co.in/?gws_rd=ssl",
-        button3:"https://www.google.co.in/?gws_rd=ssl",
-        buttontext1:"Privacy Policy",
-        buttontext2:"Terms & Conditions",
-        buttontext3:"Rules",
-        notice:"welcome to Stock Skill , Have a nice day, Thank you",
+        gstin:"27ABMCS7351L1ZN",
+         button1:"https://www.google.co.in/?gws_rd=ssl",
+         button2:"https://www.google.co.in/?gws_rd=ssl",
+         button3:"https://www.google.co.in/?gws_rd=ssl",
+         buttontext1:"Privacy Policy",
+         buttontext2:"Terms & Conditions",
+         buttontext3:"Rules",
+        notice:"Welcome to Stock Skill Fantasy Stock SKill Program  , Have a nice day, Thank you",
         
         gameName,
         gameData,
@@ -421,7 +422,12 @@ console.log("join call");
   //const re= await getRandomStock();
  
      //console.log("result::",result);
-    
+     let result = await WinResult.find({
+      createDate: {
+        $gte: new Date(new Date(req.params.date) - 7 * 24 * 60 * 60 * 1000),
+        $lt: new Date(req.params.date),
+      },
+    });
      socket.emit("res", {
        data: {
          sale: 1000,
@@ -508,6 +514,7 @@ setInterval(async () => {
   if (currentTimeInSeconds >= startTime + 420 && currentTimeInSeconds <= startTime + 421) {
     console.log("==result=="+moment().format('YYYY-MM-DD hh:mm:ss'));
     //console.log("==gametime=="+games.stockskill.startTime);
+    prest= await getRandomStock();
    gamestate=3;
     getResult("stockskill", 100,2);
   }
